@@ -1705,7 +1705,8 @@
               "name": "punctuation.definition.string.begin.abap"
             }
           },
-          "end": "(?<!\\\\)\\|",
+          "end": "\\|",
+          "applyEndPatternLast": 1,
           "endCaptures": {
             "0": {
               "name": "punctuation.definition.string.end.abap"
@@ -1714,7 +1715,7 @@
           "patterns": [
             {
               "name": "constant.character.escape.abap",
-              "match": "\\\\[\\\\|{}]"
+              "match": "\\\\[\\\\|{}nrt]"
             },
             {
               "name": "meta.interpolation.abap",
@@ -1724,13 +1725,34 @@
                   "name": "punctuation.section.interpolation.begin.abap"
                 }
               },
-              "end": "(?<!\\\\)\\}",
+              "end": "\\}",
               "endCaptures": {
                 "0": {
                   "name": "punctuation.section.interpolation.end.abap"
                 }
               },
               "patterns": [
+                {
+                  "include": "#comments"
+                },
+                {
+                  "include": "#calls"
+                },
+                {
+                  "include": "#constructors"
+                },
+                {
+                  "include": "#strings"
+                },
+                {
+                  "include": "#pragmas"
+                },
+                {
+                  "include": "#string-template-format-options"
+                },
+                {
+                  "include": "#declarations"
+                },
                 {
                   "include": "#composite-keywords"
                 },
@@ -1752,6 +1774,144 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    "string-template-format-options": {
+      "patterns": [
+        {
+          "match": "(?i:\\b(ALIGN)[ \\t]*(=)[ \\t]*(LEFT|RIGHT|CENTER)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(CASE)[ \\t]*(=)[ \\t]*(RAW|UPPER|LOWER)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(SIGN)[ \\t]*(=)[ \\t]*(LEFT|LEFTPLUS|LEFTSPACE|RIGHT|RIGHTPLUS|RIGHTSPACE)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(ZERO|XSD)[ \\t]*(=)[ \\t]*(YES|NO)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(STYLE)[ \\t]*(=)[ \\t]*(SIMPLE|SIGN_AS_POSTFIX|SCALE_PRESERVING|SCIENTIFIC|SCIENTIFIC_WITH_LEADING_ZERO|SCALE_PRESERVING_SCIENTIFIC|ENGINEERING)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(NUMBER)[ \\t]*(=)[ \\t]*(RAW|USER|ENVIRONMENT)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(ALPHA)[ \\t]*(=)[ \\t]*(IN|OUT|RAW)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(DATE|TIME)[ \\t]*(=)[ \\t]*(RAW|ISO|USER|ENVIRONMENT)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(TIMESTAMP)[ \\t]*(=)[ \\t]*(SPACE|ISO|USER|ENVIRONMENT)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            },
+            "2": {
+              "name": "keyword.operator.assignment.abap"
+            },
+            "3": {
+              "name": "constant.language.format-option.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(WIDTH|ALIGN|PAD|CASE|SIGN|EXPONENT|DECIMALS|ZERO|XSD|STYLE|CURRENCY|NUMBER|ALPHA|DATE|TIME|TIMESTAMP|TIMEZONE|COUNTRY)\\b(?=[ \\t]*=))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.format-option.abap"
+            }
+          }
         }
       ]
     },

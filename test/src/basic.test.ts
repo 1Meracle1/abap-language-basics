@@ -398,6 +398,66 @@ suite("ABAP language basics", () => {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }
   });
+
+  test("scopes string-template escapes, expressions, and formatting options", async () => {
+    const document = await openFixture("string-templates.abap");
+    await vscode.window.showTextDocument(document);
+    assert.strictEqual(document.languageId, "abap");
+
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+    const template = grammar.repository.strings.patterns.find(
+      (pattern: { name: string }) => pattern.name === "string.template.abap",
+    );
+    assert.ok(template);
+    assert.strictEqual(template.end, "\\|");
+    assert.strictEqual(template.applyEndPatternLast, 1);
+    assert.match(template.patterns[0].match, /nrt/);
+
+    const interpolation = template.patterns.find(
+      (pattern: { name?: string }) => pattern.name === "meta.interpolation.abap",
+    );
+    assert.ok(interpolation);
+    const interpolationIncludes = interpolation.patterns
+      .map((pattern: { include?: string }) => pattern.include);
+    for (const include of [
+      "#comments", "#calls", "#constructors", "#strings", "#pragmas",
+      "#string-template-format-options", "#declarations",
+    ]) {
+      assert.ok(interpolationIncludes.includes(include));
+    }
+
+    const formatOptions = grammar.repository["string-template-format-options"]
+      .patterns;
+    const formatText = JSON.stringify(formatOptions);
+    for (const option of [
+      "WIDTH", "ALIGN", "PAD", "CASE", "SIGN", "EXPONENT", "DECIMALS",
+      "ZERO", "XSD", "STYLE", "CURRENCY", "NUMBER", "ALPHA", "DATE",
+      "TIME", "TIMESTAMP", "TIMEZONE", "COUNTRY",
+    ]) {
+      assert.match(formatText, new RegExp(`\\b${option}\\b`));
+    }
+    for (const value of [
+      "LEFTPLUS", "RIGHTSPACE", "SIGN_AS_POSTFIX", "SCIENTIFIC",
+      "SCALE_PRESERVING_SCIENTIFIC", "ENGINEERING", "ENVIRONMENT",
+    ]) {
+      assert.match(formatText, new RegExp(`\\b${value}\\b`));
+    }
+
+    const fixture = fs.readFileSync(
+      path.resolve(__dirname, "../test/fixtures/string-templates.abap"),
+      "utf8",
+    );
+    for (const syntax of [
+      "\\\\|", "\\|", "\\{", "\\}", "\\n", "\\r", "\\t",
+      "ALIGN = RIGHT", "STYLE = SCIENTIFIC", "TIMESTAMP = ISO",
+      "ALIGN = (lv_alignment)", "|Nested { lv_text }|",
+    ]) {
+      assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
+    }
+  });
 });
 
 function openFixture(name: string): Thenable<vscode.TextDocument> {
