@@ -6,10 +6,11 @@ snippets, comment and bracket configuration, folding markers, and Sticky Scroll
 fallback without starting a language server.
 
 The TextMate grammar is lexical: it recognizes comments, strings, templates,
-ABAP dash-composite keywords, declarations, and nested named/control-flow
-blocks, while guarding selectors such as `sy-subrc`, `lo_object->method`, and
-`zif_interface~method` from partial keyword matches. It does not resolve names
-or parse complete ABAP syntax.
+ABAP dash-composite keywords, declarations, executable reports and selection
+screens, class and interface constructs, constructor operators, and nested
+named/control-flow blocks. It guards selectors such as `sy-subrc`,
+`lo_object->method`, and `zif_interface~method` from partial keyword matches.
+It does not resolve names or parse complete ABAP syntax.
 
 Without a document-symbol provider, Sticky Scroll falls back to the language's
 folding markers. Named units and `IF`, `CASE`, `DO`, `WHILE`, `LOOP`, `TRY`, and
