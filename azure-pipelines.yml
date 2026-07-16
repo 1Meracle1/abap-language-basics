@@ -1,0 +1,45 @@
+trigger:
+  branches:
+    exclude:
+      - "*"
+  tags:
+    include:
+      - "v*"
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  azureServiceConnection: abap-language-basics-marketplace
+
+steps:
+  - checkout: self
+    persistCredentials: false
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: 22.x
+    displayName: Use Node.js 22
+
+  - script: npm ci
+    displayName: Install dependencies
+
+  - script: node scripts/check-version.mjs "$(Build.SourceBranchName)"
+    displayName: Verify release version
+
+  - script: xvfb-run -a npm test
+    displayName: Run extension tests
+
+  - script: npm run verify:package
+    displayName: Build and verify VSIX
+
+  - task: AzureCLI@2
+    displayName: Publish to Visual Studio Marketplace
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        npx vsce publish --packagePath dist/*.vsix --azure-credential

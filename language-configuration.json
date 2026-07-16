@@ -1,0 +1,47 @@
+{
+  "comments": {
+    "lineComment": "\""
+  },
+  "brackets": [
+    ["(", ")"],
+    ["[", "]"]
+  ],
+  "autoClosingPairs": [
+    {
+      "open": "(",
+      "close": ")"
+    },
+    {
+      "open": "[",
+      "close": "]"
+    },
+    {
+      "open": "'",
+      "close": "'",
+      "notIn": ["string", "comment"]
+    },
+    {
+      "open": "`",
+      "close": "`",
+      "notIn": ["string", "comment"]
+    },
+    {
+      "open": "|",
+      "close": "|",
+      "notIn": ["string", "comment"]
+    }
+  ],
+  "surroundingPairs": [
+    ["(", ")"],
+    ["[", "]"],
+    ["'", "'"],
+    ["`", "`"],
+    ["|", "|"]
+  ],
+  "folding": {
+    "markers": {
+      "start": "^[ \\t]*(?:[Cc][Ll][Aa][Ss][Ss]\\b(?!-)(?![^\\r\\n.]*\\b(?:[Dd][Ee][Ff][Ee][Rr][Rr][Ee][Dd]|[Ll][Oo][Aa][Dd])\\b)|[Ii][Nn][Tt][Ee][Rr][Ff][Aa][Cc][Ee]\\b(?!-)(?![^\\r\\n.]*\\b(?:[Dd][Ee][Ff][Ee][Rr][Rr][Ee][Dd]|[Ll][Oo][Aa][Dd])\\b)|[Mm][Ee][Tt][Hh][Oo][Dd]\\b|[Ff][Oo][Rr][Mm]\\b|[Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn]\\b(?!-)|[Mm][Oo][Dd][Uu][Ll][Ee]\\b(?!-)|[Ii][Ff]\\b|[Cc][Aa][Ss][Ee]\\b|[Dd][Oo]\\b|[Ww][Hh][Ii][Ll][Ee]\\b|[Ll][Oo][Oo][Pp]\\b|[Tt][Rr][Yy]\\b|[Ss][Ee][Ll][Ee][Cc][Tt]\\b(?!-))",
+      "end": "^[ \\t]*(?:[Ee][Nn][Dd][Cc][Ll][Aa][Ss][Ss]|[Ee][Nn][Dd][Ii][Nn][Tt][Ee][Rr][Ff][Aa][Cc][Ee]|[Ee][Nn][Dd][Mm][Ee][Tt][Hh][Oo][Dd]|[Ee][Nn][Dd][Ff][Oo][Rr][Mm]|[Ee][Nn][Dd][Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn]|[Ee][Nn][Dd][Mm][Oo][Dd][Uu][Ll][Ee]|[Ee][Nn][Dd][Ii][Ff]|[Ee][Nn][Dd][Cc][Aa][Ss][Ee]|[Ee][Nn][Dd][Dd][Oo]|[Ee][Nn][Dd][Ww][Hh][Ii][Ll][Ee]|[Ee][Nn][Dd][Ll][Oo][Oo][Pp]|[Ee][Nn][Dd][Tt][Rr][Yy]|[Ee][Nn][Dd][Ss][Ee][Ll][Ee][Cc][Tt])\\b\\.?"
+    }
+  }
+}

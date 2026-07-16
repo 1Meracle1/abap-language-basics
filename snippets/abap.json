@@ -1,0 +1,478 @@
+{
+  "DATA declaration": {
+    "prefix": "DATA",
+    "body": "DATA ${1:lv_value} TYPE ${2:string}.",
+    "description": "Declare a data object"
+  },
+  "Inline DATA declaration": {
+    "prefix": "DATA",
+    "body": "DATA(${1:lv_value}) = ${2:source}.",
+    "description": "Declare and initialize an inline data object"
+  },
+  "CONSTANTS declaration": {
+    "prefix": "CONSTANTS",
+    "body": "CONSTANTS ${1:lc_value} TYPE ${2:string} VALUE ${3:'value'}.",
+    "description": "Declare a constant"
+  },
+  "TYPES alias": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_value} TYPE ${2:string}.",
+    "description": "Declare a type alias"
+  },
+  "TYPES structure": {
+    "prefix": "TYPES",
+    "body": [
+      "TYPES: BEGIN OF ${1:ty_row},",
+      "         ${2:field} TYPE ${3:string},",
+      "       END OF ${1:ty_row}."
+    ],
+    "description": "Declare a structured type"
+  },
+  "TYPES standard table": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_table} TYPE STANDARD TABLE OF ${2:ty_row} WITH EMPTY KEY.",
+    "description": "Declare a standard table type"
+  },
+  "TYPES sorted table": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_table} TYPE SORTED TABLE OF ${2:ty_row} WITH UNIQUE KEY ${3:key_field}.",
+    "description": "Declare a sorted table type"
+  },
+  "TYPES hashed table": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_table} TYPE HASHED TABLE OF ${2:ty_row} WITH UNIQUE KEY ${3:key_field}.",
+    "description": "Declare a hashed table type"
+  },
+  "Reference declaration": {
+    "prefix": "DATA",
+    "body": "DATA ${1:lo_object} TYPE REF TO ${2:cl_class}.",
+    "description": "Declare an object reference"
+  },
+  "FIELD-SYMBOLS declaration": {
+    "prefix": "FIELD-SYMBOLS",
+    "body": "FIELD-SYMBOLS <${1:ls_row}> TYPE ${2:ty_row}.",
+    "description": "Declare a field symbol"
+  },
+  "VALUE constructor": {
+    "prefix": "VALUE",
+    "body": [
+      "${1:result} = VALUE ${2:type}( ${3:}",
+      "  ${4:} )."
+    ],
+    "description": "Create a value with a constructor expression"
+  },
+  "VALUE table constructor": {
+    "prefix": "VALUE",
+    "body": [
+      "${1:lt_rows} = VALUE ${2:ty_table}(",
+      "  ( ${3:field} = ${4:value} )",
+      ")."
+    ],
+    "description": "Create an internal table value"
+  },
+  "NEW constructor": {
+    "prefix": "NEW",
+    "body": "${1:lo_object} = NEW ${2:cl_class}( ${3:} ).",
+    "description": "Create an object reference"
+  },
+  "Local CLASS": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:lcl_class} DEFINITION FINAL.",
+      "  PUBLIC SECTION.",
+      "    METHODS ${2:execute}.",
+      "ENDCLASS.",
+      "",
+      "CLASS ${1:lcl_class} IMPLEMENTATION.",
+      "  METHOD ${2:execute}.",
+      "    ${3:}",
+      "  ENDMETHOD.",
+      "ENDCLASS."
+    ],
+    "description": "Define and implement a local class"
+  },
+  "CLASS definition": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:lcl_class} DEFINITION${2: FINAL}.",
+      "  PUBLIC SECTION.",
+      "    ${3:}",
+      "ENDCLASS."
+    ],
+    "description": "Define a local class"
+  },
+  "CLASS implementation": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:lcl_class} IMPLEMENTATION.",
+      "  ${2:}",
+      "ENDCLASS."
+    ],
+    "description": "Implement a local class"
+  },
+  "INTERFACE definition": {
+    "prefix": "INTERFACE",
+    "body": [
+      "INTERFACE ${1:lif_interface}.",
+      "  METHODS ${2:execute}.",
+      "ENDINTERFACE."
+    ],
+    "description": "Define a local interface"
+  },
+  "METHODS declaration": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}",
+      "  RETURNING VALUE(${4:rv_result}) TYPE ${5:string}."
+    ],
+    "description": "Declare an instance method"
+  },
+  "CLASS-METHODS declaration": {
+    "prefix": "CLASS-METHODS",
+    "body": [
+      "CLASS-METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}",
+      "  RETURNING VALUE(${4:rv_result}) TYPE ${5:string}."
+    ],
+    "description": "Declare a static method"
+  },
+  "METHOD implementation": {
+    "prefix": "METHOD",
+    "body": [
+      "METHOD ${1:execute}.",
+      "  ${2:}",
+      "ENDMETHOD."
+    ],
+    "description": "Implement a method"
+  },
+  "FORM routine": {
+    "prefix": "FORM",
+    "body": [
+      "FORM ${1:perform_action}",
+      "  USING ${2:iv_value} TYPE ${3:string}",
+      "  CHANGING ${4:cv_result} TYPE ${5:string}.",
+      "  ${6:}",
+      "ENDFORM."
+    ],
+    "description": "Define a form routine"
+  },
+  "PERFORM routine": {
+    "prefix": "PERFORM",
+    "body": "PERFORM ${1:perform_action} USING ${2:value} CHANGING ${3:result}.",
+    "description": "Call a form routine"
+  },
+  "FUNCTION module": {
+    "prefix": "FUNCTION",
+    "body": [
+      "FUNCTION ${1:z_function}.",
+      "  ${2:}",
+      "ENDFUNCTION."
+    ],
+    "description": "Implement a function module"
+  },
+  "CALL FUNCTION": {
+    "prefix": "CALL FUNCTION",
+    "body": [
+      "CALL FUNCTION '${1:FUNCTION_NAME}'",
+      "  EXPORTING",
+      "    ${2:iv_value} = ${3:value}",
+      "  IMPORTING",
+      "    ${4:ev_result} = ${5:result}",
+      "  EXCEPTIONS",
+      "    OTHERS = 1.",
+      "IF sy-subrc <> 0.",
+      "  ${6:}",
+      "ENDIF."
+    ],
+    "description": "Call a function module"
+  },
+  "MODULE input": {
+    "prefix": "MODULE",
+    "body": [
+      "MODULE ${1:user_command} INPUT.",
+      "  ${2:}",
+      "ENDMODULE."
+    ],
+    "description": "Define a PAI screen module"
+  },
+  "MODULE output": {
+    "prefix": "MODULE",
+    "body": [
+      "MODULE ${1:status} OUTPUT.",
+      "  ${2:}",
+      "ENDMODULE."
+    ],
+    "description": "Define a PBO screen module"
+  },
+  "IF block": {
+    "prefix": "IF",
+    "body": [
+      "IF ${1:condition}.",
+      "  ${2:}",
+      "ENDIF."
+    ],
+    "description": "Create an IF block"
+  },
+  "IF ELSE block": {
+    "prefix": "IF",
+    "body": [
+      "IF ${1:condition}.",
+      "  ${2:}",
+      "ELSE.",
+      "  ${3:}",
+      "ENDIF."
+    ],
+    "description": "Create an IF/ELSE block"
+  },
+  "IF initial": {
+    "prefix": "IF",
+    "body": [
+      "IF ${1:value} IS INITIAL.",
+      "  ${2:}",
+      "ENDIF."
+    ],
+    "description": "Check for an initial value"
+  },
+  "CASE block": {
+    "prefix": "CASE",
+    "body": [
+      "CASE ${1:value}.",
+      "  WHEN ${2:constant}.",
+      "    ${3:}",
+      "  WHEN OTHERS.",
+      "    ${4:}",
+      "ENDCASE."
+    ],
+    "description": "Create a CASE block"
+  },
+  "DO loop": {
+    "prefix": "DO",
+    "body": [
+      "DO ${1:count} TIMES.",
+      "  ${2:}",
+      "ENDDO."
+    ],
+    "description": "Create a counted DO loop"
+  },
+  "WHILE loop": {
+    "prefix": "WHILE",
+    "body": [
+      "WHILE ${1:condition}.",
+      "  ${2:}",
+      "ENDWHILE."
+    ],
+    "description": "Create a WHILE loop"
+  },
+  "LOOP ASSIGNING": {
+    "prefix": "LOOP",
+    "body": [
+      "LOOP AT ${1:lt_rows} ASSIGNING FIELD-SYMBOL(<${2:ls_row}>).",
+      "  ${3:}",
+      "ENDLOOP."
+    ],
+    "description": "Loop over an internal table using a field symbol"
+  },
+  "LOOP INTO": {
+    "prefix": "LOOP",
+    "body": [
+      "LOOP AT ${1:lt_rows} INTO DATA(${2:ls_row}).",
+      "  ${3:}",
+      "ENDLOOP."
+    ],
+    "description": "Loop over an internal table into inline data"
+  },
+  "TRY CATCH": {
+    "prefix": "TRY",
+    "body": [
+      "TRY.",
+      "    ${1:}",
+      "  CATCH ${2:cx_root} INTO DATA(${3:lx_error}).",
+      "    ${4:}",
+      "ENDTRY."
+    ],
+    "description": "Create a TRY/CATCH block"
+  },
+  "READ TABLE by key": {
+    "prefix": "READ TABLE",
+    "body": "READ TABLE ${1:lt_rows} INTO DATA(${2:ls_row}) WITH KEY ${3:key_field} = ${4:key_value}.",
+    "description": "Read an internal table row by key"
+  },
+  "READ TABLE assigning": {
+    "prefix": "READ TABLE",
+    "body": "READ TABLE ${1:lt_rows} ASSIGNING FIELD-SYMBOL(<${2:ls_row}>) WITH KEY ${3:key_field} = ${4:key_value}.",
+    "description": "Assign an internal table row by key"
+  },
+  "READ TABLE by index": {
+    "prefix": "READ TABLE",
+    "body": "READ TABLE ${1:lt_rows} INDEX ${2:index} INTO DATA(${3:ls_row}).",
+    "description": "Read an internal table row by index"
+  },
+  "APPEND VALUE": {
+    "prefix": "APPEND",
+    "body": "APPEND VALUE #( ${1:field} = ${2:value} ) TO ${3:lt_rows}.",
+    "description": "Append a constructed row"
+  },
+  "APPEND INITIAL LINE": {
+    "prefix": "APPEND",
+    "body": "APPEND INITIAL LINE TO ${1:lt_rows} ASSIGNING FIELD-SYMBOL(<${2:ls_row}>).",
+    "description": "Append and assign an initial row"
+  },
+  "INSERT VALUE": {
+    "prefix": "INSERT",
+    "body": "INSERT VALUE #( ${1:field} = ${2:value} ) INTO TABLE ${3:lt_rows}.",
+    "description": "Insert a constructed row into an internal table"
+  },
+  "MODIFY TABLE": {
+    "prefix": "MODIFY",
+    "body": "MODIFY TABLE ${1:lt_rows} FROM ${2:ls_row}.",
+    "description": "Modify an internal table row"
+  },
+  "DELETE TABLE": {
+    "prefix": "DELETE",
+    "body": "DELETE ${1:lt_rows} WHERE ${2:condition}.",
+    "description": "Delete matching internal table rows"
+  },
+  "SORT table": {
+    "prefix": "SORT",
+    "body": "SORT ${1:lt_rows} BY ${2:field} ${3:ASCENDING}.",
+    "description": "Sort an internal table"
+  },
+  "SELECT into table": {
+    "prefix": "SELECT",
+    "body": [
+      "SELECT ${1:field_list}",
+      "  FROM ${2:database_table}",
+      "  WHERE ${3:condition}",
+      "  INTO TABLE @DATA(${4:lt_rows})."
+    ],
+    "description": "Select database rows into an internal table"
+  },
+  "SELECT SINGLE": {
+    "prefix": "SELECT",
+    "body": [
+      "SELECT SINGLE ${1:field_list}",
+      "  FROM ${2:database_table}",
+      "  WHERE ${3:condition}",
+      "  INTO @DATA(${4:ls_row})."
+    ],
+    "description": "Select one database row"
+  },
+  "SELECT loop": {
+    "prefix": "SELECT",
+    "body": [
+      "SELECT ${1:field_list}",
+      "  FROM ${2:database_table}",
+      "  WHERE ${3:condition}",
+      "  INTO @DATA(${4:ls_row}).",
+      "  ${5:}",
+      "ENDSELECT."
+    ],
+    "description": "Process selected rows in a SELECT loop"
+  },
+  "SELECT join": {
+    "prefix": "SELECT",
+    "body": [
+      "SELECT ${1:a~field}, ${2:b~field}",
+      "  FROM ${3:table_a} AS a",
+      "  INNER JOIN ${4:table_b} AS b ON ${5:b~key = a~key}",
+      "  WHERE ${6:condition}",
+      "  INTO TABLE @DATA(${7:lt_rows})."
+    ],
+    "description": "Select rows using an inner join"
+  },
+  "SELECT FOR ALL ENTRIES": {
+    "prefix": "SELECT",
+    "body": [
+      "IF ${1:lt_keys} IS NOT INITIAL.",
+      "  SELECT ${2:field_list}",
+      "    FROM ${3:database_table}",
+      "    FOR ALL ENTRIES IN @${1:lt_keys}",
+      "    WHERE ${4:key_field} = @${1:lt_keys}-${5:key_field}",
+      "    INTO TABLE @DATA(${6:lt_rows}).",
+      "ENDIF."
+    ],
+    "description": "Select rows for all entries in an internal table"
+  },
+  "INSERT database row": {
+    "prefix": "INSERT",
+    "body": "INSERT ${1:database_table} FROM @${2:ls_row}.",
+    "description": "Insert a database row"
+  },
+  "UPDATE database rows": {
+    "prefix": "UPDATE",
+    "body": "UPDATE ${1:database_table} SET ${2:field} = @${3:value} WHERE ${4:condition}.",
+    "description": "Update database rows"
+  },
+  "MODIFY database row": {
+    "prefix": "MODIFY",
+    "body": "MODIFY ${1:database_table} FROM @${2:ls_row}.",
+    "description": "Insert or update a database row"
+  },
+  "DELETE database rows": {
+    "prefix": "DELETE",
+    "body": "DELETE FROM ${1:database_table} WHERE ${2:condition}.",
+    "description": "Delete database rows"
+  },
+  "RAISE EXCEPTION TYPE": {
+    "prefix": "RAISE EXCEPTION",
+    "body": [
+      "RAISE EXCEPTION TYPE ${1:cx_error}",
+      "  EXPORTING",
+      "    ${2:parameter} = ${3:value}."
+    ],
+    "description": "Raise a class-based exception"
+  },
+  "MESSAGE": {
+    "prefix": "MESSAGE",
+    "body": "MESSAGE ${1:e001}(${2:message_class}) WITH ${3:value}.",
+    "description": "Issue a message"
+  },
+  "AUTHORITY-CHECK": {
+    "prefix": "AUTHORITY-CHECK",
+    "body": [
+      "AUTHORITY-CHECK OBJECT '${1:AUTH_OBJECT}'",
+      "  ID '${2:FIELD}' FIELD ${3:value}",
+      "  ID 'ACTVT' FIELD '${4:03}'.",
+      "IF sy-subrc <> 0.",
+      "  ${5:}",
+      "ENDIF."
+    ],
+    "description": "Perform an authorization check"
+  },
+  "GET TIME STAMP": {
+    "prefix": "GET TIME STAMP",
+    "body": "GET TIME STAMP FIELD DATA(${1:lv_timestamp}).",
+    "description": "Read the current UTC timestamp"
+  },
+  "COMMIT WORK": {
+    "prefix": "COMMIT WORK",
+    "body": "COMMIT WORK${1: AND WAIT}.",
+    "description": "Commit the current SAP LUW"
+  },
+  "ROLLBACK WORK": {
+    "prefix": "ROLLBACK WORK",
+    "body": "ROLLBACK WORK.",
+    "description": "Roll back the current SAP LUW"
+  },
+  "CONCATENATE": {
+    "prefix": "CONCATENATE",
+    "body": "CONCATENATE ${1:value_1} ${2:value_2} INTO ${3:result} SEPARATED BY ${4:space}.",
+    "description": "Concatenate character-like values"
+  },
+  "SPLIT": {
+    "prefix": "SPLIT",
+    "body": "SPLIT ${1:text} AT ${2:separator} INTO ${3:part_1} ${4:part_2}.",
+    "description": "Split a character-like value"
+  },
+  "FIND REGEX": {
+    "prefix": "FIND",
+    "body": "FIND REGEX ${1:pattern} IN ${2:text} MATCH OFFSET DATA(${3:offset}) MATCH LENGTH DATA(${4:length}).",
+    "description": "Find a regular expression match"
+  },
+  "REPLACE REGEX": {
+    "prefix": "REPLACE",
+    "body": "REPLACE ALL OCCURRENCES OF REGEX ${1:pattern} IN ${2:text} WITH ${3:replacement}.",
+    "description": "Replace regular expression matches"
+  }
+}

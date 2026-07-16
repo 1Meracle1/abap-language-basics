@@ -1,0 +1,13 @@
+.vscode/**
+.vscode-test/**
+.gitignore
+test/**
+out/**
+dist/**
+scripts/**
+.github/**
+azure-pipelines.yml
+package-lock.json
+**/*.md
+!README.md
+!CHANGELOG.md

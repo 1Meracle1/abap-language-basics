@@ -1,0 +1,644 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "ABAP",
+  "scopeName": "source.abap",
+  "patterns": [
+    {
+      "include": "#code"
+    }
+  ],
+  "repository": {
+    "code": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#calls"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#blocks"
+        },
+        {
+          "include": "#chained-declarations"
+        },
+        {
+          "include": "#declarations"
+        },
+        {
+          "include": "#composite-keywords"
+        },
+        {
+          "include": "#keywords"
+        },
+        {
+          "include": "#pragmas"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#identifiers"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "calls": {
+      "patterns": [
+        {
+          "match": "(?i:(?<![!\\-~>/])\\b(CALL)[ \\t]+(FUNCTION)[ \\t]+('(?:''|[^'\\r\\n])*'))",
+          "captures": {
+            "1": {
+              "name": "keyword.control.call.abap"
+            },
+            "2": {
+              "name": "keyword.other.function.abap"
+            },
+            "3": {
+              "name": "entity.name.function.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![!\\-~>/])\\b(PERFORM)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.control.call.abap"
+            },
+            "2": {
+              "name": "entity.name.function.form.abap"
+            }
+          }
+        }
+      ]
+    },
+    "blocks": {
+      "patterns": [
+        {
+          "name": "meta.class.abap",
+          "begin": "(?i:^[ \\t]*(CLASS)\\b(?!-)(?![^.\\r\\n]*\\b(?:DEFERRED|LOAD)\\b)[ \\t]+(!?[/A-Z0-9_]+))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.class.abap"
+            },
+            "2": {
+              "name": "entity.name.type.class.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDCLASS)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endclass.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.interface.abap",
+          "begin": "(?i:^[ \\t]*(INTERFACE)\\b(?!-)(?![^.\\r\\n]*\\b(?:DEFERRED|LOAD)\\b)[ \\t]+(!?[/A-Z0-9_]+))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.interface.abap"
+            },
+            "2": {
+              "name": "entity.name.type.interface.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDINTERFACE)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endinterface.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.method.abap",
+          "begin": "(?i:^[ \\t]*(METHOD)\\b[ \\t]+(!?[/A-Z0-9_~]+))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.function.method.abap"
+            },
+            "2": {
+              "name": "entity.name.function.member.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDMETHOD)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endmethod.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.function.form.abap",
+          "begin": "(?i:^[ \\t]*(FORM)\\b[ \\t]+(!?[/A-Z0-9_]+))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.function.form.abap"
+            },
+            "2": {
+              "name": "entity.name.function.form.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDFORM)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endform.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.function.function-module.abap",
+          "begin": "(?i:^[ \\t]*(FUNCTION)\\b(?!-)[ \\t]+(?:('(?:''|[^'\\r\\n])*')|(!?[/A-Z0-9_]+)))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.function.abap"
+            },
+            "2": {
+              "name": "entity.name.function.abap"
+            },
+            "3": {
+              "name": "entity.name.function.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDFUNCTION)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endfunction.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.function.module.abap",
+          "begin": "(?i:^[ \\t]*(MODULE)\\b(?!-)[ \\t]+(!?[/A-Z0-9_]+))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.function.module.abap"
+            },
+            "2": {
+              "name": "entity.name.function.module.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDMODULE)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endmodule.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.block.if.abap",
+          "begin": "(?i:^[ \\t]*(IF)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.if.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDIF)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endif.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.block.case.abap",
+          "begin": "(?i:^[ \\t]*(CASE)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.case.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDCASE)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endcase.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.block.do.abap",
+          "begin": "(?i:^[ \\t]*(DO)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.do.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDDO)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.enddo.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.block.while.abap",
+          "begin": "(?i:^[ \\t]*(WHILE)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.while.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDWHILE)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endwhile.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.block.loop.abap",
+          "begin": "(?i:^[ \\t]*(LOOP)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.loop.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDLOOP)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endloop.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.block.try.abap",
+          "begin": "(?i:^[ \\t]*(TRY)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.try.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDTRY)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endtry.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        },
+        {
+          "name": "meta.block.select.abap",
+          "begin": "(?i:^[ \\t]*(SELECT)\\b(?!-)(?![^.\\r\\n]*\\bSINGLE\\b))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.select.abap"
+            }
+          },
+          "end": "(?i:^[ \\t]*(ENDSELECT)\\b\\.?)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.control.endselect.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#code"
+            }
+          ]
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "match": "(?i:(?<![-~>/])\\b(DATA|FINAL)[ \\t]*\\([ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*\\))",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.variable.abap"
+            },
+            "2": {
+              "name": "variable.other.readwrite.declaration.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(DATA|CONSTANTS|STATICS|TYPES|PARAMETERS|RANGES)\\b[ \\t]*:?[ \\t]*(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            },
+            "2": {
+              "name": "variable.other.declaration.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(FIELD-SYMBOLS)\\b[ \\t]*:?[ \\t]*(<[/A-Z_][A-Z0-9_/]*>))",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            },
+            "2": {
+              "name": "variable.other.readwrite.declaration.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(CLASS-METHODS|METHODS|CLASS-EVENTS|EVENTS)\\b[ \\t]*:?[ \\t]*(!?[/A-Z_][A-Z0-9_/~]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.function.abap"
+            },
+            "2": {
+              "name": "entity.name.function.member.abap"
+            }
+          }
+        }
+      ]
+    },
+    "chained-declarations": {
+      "patterns": [
+        {
+          "name": "meta.declaration.chain.abap",
+          "begin": "(?i:^[ \\t]*(DATA|CONSTANTS|STATICS|TYPES|PARAMETERS|RANGES|CLASS-DATA|FIELD-SYMBOLS)\\b[ \\t]*:)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(BEGIN|END)[ \\t]+(OF)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.abap"
+                },
+                "2": {
+                  "name": "keyword.other.abap"
+                },
+                "3": {
+                  "name": "entity.name.type.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(<[/A-Z_][A-Z0-9_/]*>|!?[/A-Z_][A-Z0-9_/]*))",
+              "captures": {
+                "1": {
+                  "name": "variable.other.readwrite.declaration.abap"
+                }
+              }
+            },
+            {
+              "include": "#composite-keywords"
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#constants"
+            },
+            {
+              "include": "#identifiers"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        }
+      ]
+    },
+    "composite-keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:AUTHORITY-CHECK|BIT-AND|BIT-OR|BIT-XOR|BREAK-POINT|BYTE-ORDER|CLASS-DATA|CLASS-EVENTS|CLASS-METHODS|CUSTOMER-FUNCTION|END-ENHANCEMENT-SECTION|END-OF-DEFINITION|END-OF-PAGE|END-OF-SELECTION|END-TEST-INJECTION|END-TEST-SEAM|ENHANCEMENT-SECTION|EXCEPTION-TABLE|EXIT-COMMAND|FIELD-GROUPS|FIELD-SYMBOLS|FUNCTION-POOL|HELP-REQUEST|LINE-COUNT|LINE-SELECTION|LINE-SIZE|LIST-PROCESSING|LOAD-OF-PROGRAM|LOG-POINT|MESSAGE-ID|MOVE-CORRESPONDING|NEW-LINE|NEW-PAGE|NO-DISPLAY|NO-EXTENSION|NO-GAPS|NON-UNIQUE|PARAMETER-TABLE|PF-STATUS|READ-ONLY|SAP-SPOOL|SELECT-OPTIONS|SELECTION-SCREEN|SELECTION-SET|SELECTION-SETS|SELECTION-TABLE|START-OF-SELECTION|SYSTEM-EXCEPTIONS|TEST-INJECTION|TEST-SEAM|TOP-OF-PAGE|TYPE-POOLS|USER-COMMAND|VALUE-REQUEST)\\b(?![-~/]))"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ABSTRACT|ACCEPTING|ALIASES|ALL|AND|APPENDING|ASSERT|ASSIGN|ASSIGNED|ASSIGNING|AT|AUTHORITY|BEGIN|BETWEEN|BOUND|BY|CASTING|CATCH|CHECK|CLASS|CLEANUP|COMMIT|CONTINUE|DO|ELSE|ELSEIF|END|ENDAT|ENDCLASS|ENDDO|ENDFORM|ENDFUNCTION|ENDIF|ENDINTERFACE|ENDLOOP|ENDMETHOD|ENDMODULE|ENDSELECT|ENDTRY|ENDWHILE|EXCEPT|EXCEPTION|EXCEPTIONS|EXIT|FORM|FUNCTION|IF|IMPLEMENTATION|IN|INITIALIZATION|INTERFACE|LEAVE|LOOP|METHOD|MODULE|NOT|OR|PERFORM|RAISE|RECEIVE|RETURN|ROLLBACK|SELECT|STOP|TRY|WAIT|WHEN|WHILE)\\b(?![-~/]))"
+        },
+        {
+          "name": "storage.type.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ANY|BYTE|C|CHARACTER|CLIKE|CSEQUENCE|D|DATA|DECFLOAT16|DECFLOAT34|F|FIELD-SYMBOLS|HASHED|I|INDEX|INT1|INT2|INT4|INT8|N|NUMERIC|OBJECT|P|REF|REFERENCE|SIMPLE|SORTED|STANDARD|STRING|STRUCTURE|TABLE|TYPE|TYPES|X|XSEQUENCE|XSTRING)\\b(?![-~/]))"
+        },
+        {
+          "name": "support.function.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:BOOLC|CAST|COND|CONV|CORRESPONDING|EXACT|FILTER|LINE_EXISTS|LINES|NEW|REDUCE|REF|SWITCH|XSDBOOL|VALUE)\\b(?=[ \\t]*[ #(]))"
+        },
+        {
+          "name": "keyword.other.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ACCEPTING|ADJACENT|APPEND|AS|ASCENDING|ASYNCHRONOUS|BADI|BACK|BINARY|BLANKS|BUFFER|BYPASSING|BYTE|CALL|CALLING|CAST|CHANGING|CLIENT|CLOSE|COLLECT|COMPARING|COMPONENTS|CONCATENATE|COND|CONDENSE|CONNECTION|CONSTANTS|CONVERT|CORRESPONDING|CREATE|CRITICAL|CURRENT|CURSOR|DATABASE|DEFAULT|DEFERRED|DELETE|DELETING|DESCENDING|DESCRIBE|DESTINATION|DISPLAY|DUPLICATES|DURATION|EMPTY|ENABLED|ENTRIES|ENUM|EVENT|EVENTS|EXPORT|EXPORTING|EXTENSION|FETCH|FIELDS|FILTER|FILTERS|FINAL|FIND|FIRST|FOR|FREE|FRIENDS|FROM|GAPS|GET|GROUP|HARMLESS|HAVING|IGNORING|IMPORT|IMPORTING|INHERITING|INIT|INNER|INSERT|INSTANCE|INTERFACES|INTERVALS|INTO|JOIN|KEY|LET|LINE|LINES|LONG|MAPPING|MATCH|MEDIUM|MESSAGE|MODIFY|MOVE|NEXT|NO|NON|OCCURRENCE|OCCURRENCES|OF|ON|OPEN|OPTIONAL|ORDER|OTHERS|OUTER|PACKAGE|PARAMETERS|PLACES|PRIVATE|PROTECTED|PUBLIC|RADIOBUTTON|RAISING|READ|RECEIVING|REDEFINITION|REDUCE|REFRESH|REGEX|REPLACE|RESUMABLE|RETURNING|RISK|ROWS|SCREEN|SECONDS|SECTION|SELECTION|SEPARATED|SET|SHARED|SHORT|SINGLE|SIZE|SKIP|SORT|SPECIFIED|SPLIT|STABLE|STARTING|STATIC|STATICS|SUBMATCHES|SUBMIT|SUPPLIED|TASK|TESTING|THEN|TIME|STAMP|TO|TRANSFER|TRANSPORTING|TRAILING|UNASSIGN|UNIQUE|UNTIL|UP|UPDATE|USING|VALUE|VALUES|VISIBLE|WHERE|WITH|WORK|ZONE)\\b(?![-~/]))"
+        },
+        {
+          "name": "keyword.operator.word.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:BIT-AND|BIT-OR|BIT-XOR|CN|CO|CP|CS|EQ|GE|GT|LE|LT|M|NE|NS|NOT|O|Z)\\b(?![-~/]))"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.abap",
+          "match": "'(?:''|[^'\\r\\n])*'"
+        },
+        {
+          "name": "string.quoted.other.backtick.abap",
+          "match": "`(?:``|[^`\\r\\n])*`"
+        },
+        {
+          "name": "string.template.abap",
+          "begin": "\\|",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.abap"
+            }
+          },
+          "end": "(?<!\\\\)\\|",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.abap"
+            }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.abap",
+              "match": "\\\\[\\\\|{}]"
+            },
+            {
+              "name": "meta.interpolation.abap",
+              "begin": "(?<!\\\\)\\{",
+              "beginCaptures": {
+                "0": {
+                  "name": "punctuation.section.interpolation.begin.abap"
+                }
+              },
+              "end": "(?<!\\\\)\\}",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.section.interpolation.end.abap"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#composite-keywords"
+                },
+                {
+                  "include": "#keywords"
+                },
+                {
+                  "include": "#numbers"
+                },
+                {
+                  "include": "#identifiers"
+                },
+                {
+                  "include": "#operators"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.asterisk.abap",
+          "match": "^[ \\t]*\\*.*$"
+        },
+        {
+          "name": "comment.line.double-quote.abap",
+          "match": "\".*$"
+        }
+      ]
+    },
+    "pragmas": {
+      "patterns": [
+        {
+          "name": "keyword.other.directive.pragma.abap",
+          "match": "##[A-Z_][A-Z0-9_]*(?:\\[[^]\\r\\n]*\\])?"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.abap",
+          "match": "(?i:(?<![A-Z0-9_])\\d+(?:\\.\\d+)?(?![A-Z0-9_]))"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.readwrite.field-symbol.abap",
+          "match": "(?i:<[/A-Z_][A-Z0-9_/]*>)"
+        },
+        {
+          "name": "variable.other.readwrite.abap",
+          "match": "(?i:!?/?[A-Z_][A-Z0-9_/]*(?:[-~][A-Z0-9_/]+)*)"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "punctuation.accessor.abap",
+          "match": "->|=>|~"
+        },
+        {
+          "name": "keyword.operator.abap",
+          "match": "<>|<=|>=|=|<|>|\\+|-|\\*|/"
+        },
+        {
+          "name": "punctuation.terminator.statement.abap",
+          "match": "\\."
+        },
+        {
+          "name": "punctuation.separator.abap",
+          "match": "[:,]"
+        }
+      ]
+    }
+  }
+}
