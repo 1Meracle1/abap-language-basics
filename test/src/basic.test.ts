@@ -350,12 +350,19 @@ suite("ABAP language basics", () => {
       "meta.statement.open-sql.select.abap",
       "meta.statement.open-sql.insert.abap",
       "meta.statement.open-sql.update.abap",
-      "meta.statement.open-sql.modify.abap",
       "meta.statement.open-sql.delete.abap",
     ]) {
       assert.ok(statements.some((pattern: { name: string }) =>
         pattern.name === scope));
     }
+    assert.strictEqual(
+      grammar.repository["modify-statements"].patterns[0].name,
+      "meta.statement.modify.abap",
+    );
+    assert.match(
+      JSON.stringify(statements),
+      /variable\.other\.dynamic-table\.sql\.abap/,
+    );
 
     const sqlTokens = grammar.repository["open-sql-tokens"].patterns;
     const tokenText = JSON.stringify(sqlTokens);
@@ -393,7 +400,7 @@ suite("ABAP language basics", () => {
       "SELECT SINGLE", "LEFT OUTER JOIN", "FOR ALL ENTRIES IN",
       "COALESCE(", "CASE WHEN", "UNION DISTINCT", "INSERT INTO",
       "ACCEPTING DUPLICATE KEYS", "UPDATE (lv_table)",
-      "DELETE FROM", "WHERE (lv_where)",
+      "MODIFY (lv_table)", "DELETE FROM (lv_table)", "WHERE (lv_where)",
     ]) {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }
@@ -454,6 +461,71 @@ suite("ABAP language basics", () => {
       "\\\\|", "\\|", "\\{", "\\}", "\\n", "\\r", "\\t",
       "ALIGN = RIGHT", "STYLE = SCIENTIFIC", "TIMESTAMP = ISO",
       "ALIGN = (lv_alignment)", "|Nested { lv_text }|",
+    ]) {
+      assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
+    }
+  });
+
+  test("scopes internal-table statements, additions, and ABAP literals", async () => {
+    const document = await openFixture("internal-tables.abap");
+    await vscode.window.showTextDocument(document);
+    assert.strictEqual(document.languageId, "abap");
+
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+    const statements = grammar.repository["internal-table-statements"].patterns;
+    for (const scope of [
+      "meta.statement.internal-table.read.abap",
+      "meta.statement.internal-table.append.abap",
+      "meta.statement.internal-table.insert.abap",
+      "meta.statement.internal-table.delete.abap",
+      "meta.statement.internal-table.delete-duplicates.abap",
+      "meta.statement.internal-table.sort.abap",
+      "meta.statement.internal-table.collect.abap",
+      "meta.statement.internal-table.describe.abap",
+    ]) {
+      assert.ok(statements.some((pattern: { name: string }) =>
+        pattern.name === scope));
+    }
+    assert.strictEqual(
+      grammar.repository["modify-statements"].patterns[0].name,
+      "meta.statement.modify.abap",
+    );
+
+    const tokenText = JSON.stringify(
+      grammar.repository["internal-table-tokens"].patterns,
+    );
+    for (const syntax of [
+      "TRANSPORTING", "NO", "FIELDS", "BINARY", "SEARCH", "REFERENCE",
+      "LINES", "OF", "INITIAL", "LINE", "ADJACENT", "DUPLICATES",
+      "COMPARING", "COMPONENTS", "INDEX", "USING",
+    ]) {
+      assert.match(tokenText, new RegExp(`\\b${syntax}\\b`));
+    }
+
+    const loop = grammar.repository.blocks.patterns.find(
+      (pattern: { name: string }) => pattern.name === "meta.block.loop.abap",
+    );
+    assert.ok(loop);
+    assert.ok(loop.patterns.some((pattern: { name?: string }) =>
+      pattern.name === "meta.statement.internal-table.loop.abap"));
+
+    const number = grammar.repository.numbers.patterns[0];
+    assert.strictEqual(number.name, "constant.numeric.abap");
+    assert.doesNotMatch(number.match, /\\\\\./);
+
+    const fixture = fs.readFileSync(
+      path.resolve(__dirname, "../test/fixtures/internal-tables.abap"),
+      "utf8",
+    );
+    for (const syntax of [
+      "TRANSPORTING NO FIELDS", "BINARY SEARCH", "REFERENCE INTO",
+      "APPEND INITIAL LINE", "INSERT LINES OF", "USING KEY",
+      "ADJACENT DUPLICATES FROM", "COMPARING id text", "DESCRIBE TABLE",
+      "SORT lt_rows",
+      "'Don''t'", "`Use `` inside`", "9999999999999999999999999999999",
     ]) {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }

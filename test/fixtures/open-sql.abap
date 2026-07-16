@@ -51,5 +51,6 @@ INSERT zflight_stats FROM
 UPDATE (lv_table)
   SET (lv_set)
   WHERE (lv_where).
+MODIFY (lv_table) FROM @ls_stats.
 MODIFY zflight_stats FROM TABLE @lt_stats.
-DELETE FROM zflight_stats WHERE carrid = @lv_carrid.
+DELETE FROM (lv_table) WHERE (lv_where).

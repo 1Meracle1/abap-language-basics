@@ -26,7 +26,13 @@
           "include": "#blocks"
         },
         {
+          "include": "#modify-statements"
+        },
+        {
           "include": "#open-sql"
+        },
+        {
+          "include": "#internal-table-statements"
         },
         {
           "include": "#oo-declarations"
@@ -346,10 +352,16 @@
         },
         {
           "name": "meta.block.loop.abap",
-          "begin": "(?i:^[ \\t]*(LOOP)\\b)",
+          "begin": "(?i:^[ \\t]*(LOOP)\\b(?:[ \\t]+(AT)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))?)",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.loop.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "3": {
+              "name": "variable.other.table.abap"
             }
           },
           "end": "(?i:^[ \\t]*(ENDLOOP)\\b\\.?)",
@@ -359,6 +371,21 @@
             }
           },
           "patterns": [
+            {
+              "name": "meta.statement.internal-table.loop.abap",
+              "begin": "\\G",
+              "end": "\\.",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.terminator.statement.abap"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#internal-table-tokens"
+                }
+              ]
+            },
             {
               "include": "#code"
             }
@@ -421,6 +448,349 @@
         }
       ]
     },
+    "internal-table-statements": {
+      "patterns": [
+        {
+          "name": "meta.statement.internal-table.read.abap",
+          "begin": "(?i:^[ \\t]*(READ)[ \\t]+(TABLE)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.read.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "3": {
+              "name": "variable.other.table.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#internal-table-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.internal-table.append.abap",
+          "begin": "(?i:^[ \\t]*(APPEND)\\b(?!-))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.append.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#internal-table-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.internal-table.insert.abap",
+          "begin": "(?i:^[ \\t]*(INSERT)\\b(?!-))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.insert.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#internal-table-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.internal-table.delete-duplicates.abap",
+          "begin": "(?i:^[ \\t]*(DELETE)[ \\t]+(ADJACENT)[ \\t]+(DUPLICATES)[ \\t]+(FROM)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.delete.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "3": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "4": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "5": {
+              "name": "variable.other.table.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#internal-table-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.internal-table.delete.abap",
+          "begin": "(?i:^[ \\t]*(DELETE)\\b(?![ \\t]+FROM\\b)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.delete.abap"
+            },
+            "2": {
+              "name": "variable.other.table.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#internal-table-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.internal-table.sort.abap",
+          "begin": "(?i:^[ \\t]*(SORT)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.sort.abap"
+            },
+            "2": {
+              "name": "variable.other.table.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#internal-table-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.internal-table.collect.abap",
+          "begin": "(?i:^[ \\t]*(COLLECT)\\b(?!-))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.collect.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#internal-table-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.internal-table.describe.abap",
+          "begin": "(?i:^[ \\t]*(DESCRIBE)[ \\t]+(TABLE)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.describe.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "3": {
+              "name": "variable.other.table.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#internal-table-tokens"
+            }
+          ]
+        }
+      ]
+    },
+    "modify-statements": {
+      "patterns": [
+        {
+          "name": "meta.statement.modify.abap",
+          "begin": "(?i:^[ \\t]*(MODIFY)[ \\t]+(?:(!?/?[A-Z_][A-Z0-9_/]*)|(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\))))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.modify.abap"
+            },
+            "2": {
+              "name": "variable.other.data-source.abap"
+            },
+            "3": {
+              "name": "punctuation.section.group.begin.abap"
+            },
+            "4": {
+              "name": "variable.other.dynamic-data-source.abap"
+            },
+            "5": {
+              "name": "punctuation.section.group.end.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "include": "#internal-table-tokens"
+            },
+            {
+              "include": "#open-sql-tokens"
+            }
+          ]
+        }
+      ]
+    },
+    "internal-table-tokens": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#pragmas"
+        },
+        {
+          "match": "(?i:\\b(TRANSPORTING)[ \\t]+(NO)[ \\t]+(FIELDS)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "3": {
+              "name": "keyword.other.internal-table.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(BINARY)[ \\t]+(SEARCH)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(REFERENCE)[ \\t]+(INTO)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(LINES)[ \\t]+(OF)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(INITIAL)[ \\t]+(LINE)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(ADJACENT)[ \\t]+(DUPLICATES)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "2": {
+              "name": "keyword.other.internal-table.abap"
+            }
+          }
+        },
+        {
+          "name": "keyword.other.internal-table.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:ALL|ASSIGNING|BY|COMPARING|COMPONENTS|FIELDS|FROM|INDEX|INTO|KEY|LINES|OF|REFERENCE|SORTED|TABLE|TO|TRANSPORTING|USING|WHERE)\\b(?![-~/]))"
+        },
+        {
+          "include": "#declarations"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#identifiers"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
     "open-sql": {
       "patterns": [
         {
@@ -465,30 +835,22 @@
         },
         {
           "name": "meta.statement.open-sql.update.abap",
-          "begin": "(?i:^[ \\t]*(UPDATE)\\b(?!-))",
+          "begin": "(?i:^[ \\t]*(UPDATE)[ \\t]+(?:(!?/?[A-Z_][A-Z0-9_/]*)|(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\))))",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.sql.update.abap"
-            }
-          },
-          "end": "\\.",
-          "endCaptures": {
-            "0": {
-              "name": "punctuation.terminator.statement.abap"
-            }
-          },
-          "patterns": [
-            {
-              "include": "#open-sql-tokens"
-            }
-          ]
-        },
-        {
-          "name": "meta.statement.open-sql.modify.abap",
-          "begin": "(?i:^[ \\t]*(MODIFY)\\b(?=[ \\t]+[(!?A-Z_/][A-Z0-9_()/]*[ \\t]+FROM\\b))",
-          "beginCaptures": {
-            "1": {
-              "name": "keyword.control.sql.modify.abap"
+            },
+            "2": {
+              "name": "entity.name.table.sql.abap"
+            },
+            "3": {
+              "name": "punctuation.section.group.begin.sql.abap"
+            },
+            "4": {
+              "name": "variable.other.dynamic-table.sql.abap"
+            },
+            "5": {
+              "name": "punctuation.section.group.end.sql.abap"
             }
           },
           "end": "\\.",
@@ -505,7 +867,7 @@
         },
         {
           "name": "meta.statement.open-sql.delete.abap",
-          "begin": "(?i:^[ \\t]*(DELETE)[ \\t]+(FROM)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "begin": "(?i:^[ \\t]*(DELETE)[ \\t]+(FROM)[ \\t]+(?:(!?/?[A-Z_][A-Z0-9_/]*)|(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\))))",
           "beginCaptures": {
             "1": {
               "name": "keyword.control.sql.delete.abap"
@@ -515,6 +877,15 @@
             },
             "3": {
               "name": "entity.name.table.sql.abap"
+            },
+            "4": {
+              "name": "punctuation.section.group.begin.sql.abap"
+            },
+            "5": {
+              "name": "variable.other.dynamic-table.sql.abap"
+            },
+            "6": {
+              "name": "punctuation.section.group.end.sql.abap"
             }
           },
           "end": "\\.",
@@ -1939,7 +2310,7 @@
       "patterns": [
         {
           "name": "constant.numeric.abap",
-          "match": "(?i:(?<![A-Z0-9_])\\d+(?:\\.\\d+)?(?![A-Z0-9_]))"
+          "match": "(?i:(?<![A-Z0-9_])\\d+(?![A-Z0-9_]))"
         }
       ]
     },
