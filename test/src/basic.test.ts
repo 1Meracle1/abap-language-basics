@@ -530,6 +530,72 @@ suite("ABAP language basics", () => {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }
   });
+
+  test("scopes table expressions, dereferencing, and selector members", async () => {
+    const document = await openFixture("expressions.abap");
+    await vscode.window.showTextDocument(document);
+    assert.strictEqual(document.languageId, "abap");
+
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+    const tableExpressions = grammar.repository["table-expressions"].patterns;
+    assert.ok(tableExpressions.some((pattern: { name: string }) =>
+      pattern.name === "meta.table-expression.abap"));
+    assert.ok(tableExpressions.some((pattern: { name: string }) =>
+      pattern.name === "meta.table-expression.chained.abap"));
+
+    const tableContent = JSON.stringify(
+      grammar.repository["table-expression-content"].patterns,
+    );
+    for (const scope of [
+      "entity.name.key.table.abap",
+      "variable.other.dynamic-key.abap",
+      "variable.other.member.key.abap",
+      "variable.other.dynamic-component.abap",
+      "keyword.other.table-expression.abap",
+    ]) {
+      assert.match(tableContent, new RegExp(scope.replaceAll(".", "\\.")));
+    }
+
+    const identifiers = JSON.stringify(grammar.repository.identifiers.patterns);
+    for (const scope of [
+      "variable.language.self.abap",
+      "entity.name.type.class.reference.abap",
+      "variable.other.object.abap",
+      "variable.language.dereferenced.abap",
+      "variable.other.member.static.abap",
+      "variable.other.member.object.abap",
+      "variable.other.member.abap",
+    ]) {
+      assert.match(identifiers, new RegExp(scope.replaceAll(".", "\\.")));
+    }
+    assert.doesNotMatch(
+      grammar.repository.identifiers.patterns.at(-1).match,
+      /\(\?:\[-~\]/,
+    );
+    assert.match(grammar.repository.operators.patterns[0].match, /\\]/);
+
+    const globalKeywords = grammar.repository.keywords.patterns
+      .map((pattern: { match: string }) => pattern.match)
+      .join("\n");
+    assert.match(globalKeywords, /\(\?<!\[!\\-~>\/\]\)/);
+    assert.match(globalKeywords, /\(\?!\[-~\/\]\)/);
+
+    const fixture = fs.readFileSync(
+      path.resolve(__dirname, "../test/fixtures/expressions.abap"),
+      "utf8",
+    );
+    for (const syntax of [
+      "[ KEY by_id COMPONENTS", "[ KEY (lv_key) COMPONENTS",
+      "(lv_component) =", "[ KEY by_text INDEX 1 ]", "]-rows[",
+      "lr_row->*-id", "me->handler", "cl_abap_typedescr=>describe_by_data",
+      "zif_worker~preferred", "ls_keywords-select",
+    ]) {
+      assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
+    }
+  });
 });
 
 function openFixture(name: string): Thenable<vscode.TextDocument> {

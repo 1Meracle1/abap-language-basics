@@ -20,6 +20,9 @@
           "include": "#constructors"
         },
         {
+          "include": "#table-expressions"
+        },
+        {
           "include": "#strings"
         },
         {
@@ -124,6 +127,152 @@
               "name": "entity.name.type.abap"
             }
           }
+        }
+      ]
+    },
+    "table-expressions": {
+      "patterns": [
+        {
+          "name": "meta.table-expression.abap",
+          "begin": "(?i:(?<![A-Z0-9_])(?:(<[/A-Z_][A-Z0-9_/]*>)|(!?/?[A-Z_][A-Z0-9_/]*)(?:(->)(\\*))?)(\\[))",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.other.readwrite.field-symbol.abap"
+            },
+            "2": {
+              "name": "variable.other.table.abap"
+            },
+            "3": {
+              "name": "punctuation.accessor.abap"
+            },
+            "4": {
+              "name": "variable.language.dereferenced.abap"
+            },
+            "5": {
+              "name": "punctuation.section.brackets.begin.abap"
+            }
+          },
+          "end": "\\]",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.brackets.end.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#table-expression-content"
+            }
+          ]
+        },
+        {
+          "name": "meta.table-expression.chained.abap",
+          "begin": "(?<=\\])(\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.section.brackets.begin.abap"
+            }
+          },
+          "end": "\\]",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.brackets.end.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#table-expression-content"
+            }
+          ]
+        }
+      ]
+    },
+    "table-expression-content": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#calls"
+        },
+        {
+          "include": "#constructors"
+        },
+        {
+          "include": "#table-expressions"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#pragmas"
+        },
+        {
+          "match": "(?i:\\b(KEY)[ \\t]+(?:(!?[/A-Z_][A-Z0-9_/]*)|(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\)))(?:[ \\t]+(INDEX))?)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.table-expression.abap"
+            },
+            "2": {
+              "name": "entity.name.key.table.abap"
+            },
+            "3": {
+              "name": "punctuation.section.group.begin.abap"
+            },
+            "4": {
+              "name": "variable.other.dynamic-key.abap"
+            },
+            "5": {
+              "name": "punctuation.section.group.end.abap"
+            },
+            "6": {
+              "name": "keyword.other.table-expression.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?:\\b(!?[/A-Z_][A-Z0-9_/]*)|(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\)))[ \\t]*(=))",
+          "captures": {
+            "1": {
+              "name": "variable.other.member.key.abap"
+            },
+            "2": {
+              "name": "punctuation.section.group.begin.abap"
+            },
+            "3": {
+              "name": "variable.other.dynamic-component.abap"
+            },
+            "4": {
+              "name": "punctuation.section.group.end.abap"
+            },
+            "5": {
+              "name": "keyword.operator.assignment.abap"
+            }
+          }
+        },
+        {
+          "name": "keyword.other.table-expression.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:COMPONENTS|INDEX|KEY)\\b(?![-~/]))"
+        },
+        {
+          "include": "#declarations"
+        },
+        {
+          "include": "#composite-keywords"
+        },
+        {
+          "include": "#keywords"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#identifiers"
+        },
+        {
+          "include": "#operators"
         }
       ]
     },
@@ -2337,8 +2486,36 @@
           "match": "(?i:<[/A-Z_][A-Z0-9_/]*>)"
         },
         {
+          "name": "variable.language.self.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:ME|SUPER)\\b(?=->))"
+        },
+        {
+          "name": "entity.name.type.class.reference.abap",
+          "match": "(?i:(?<![-~>/])\\b!?/?[A-Z_][A-Z0-9_/]*\\b(?==>))"
+        },
+        {
+          "name": "variable.other.object.abap",
+          "match": "(?i:(?<![-~>/])\\b!?/?[A-Z_][A-Z0-9_/]*\\b(?=->))"
+        },
+        {
+          "name": "variable.language.dereferenced.abap",
+          "match": "(?<=->)\\*"
+        },
+        {
+          "name": "variable.other.member.static.abap",
+          "match": "(?i:(?<==>)!?/?[A-Z_][A-Z0-9_/]*\\b)"
+        },
+        {
+          "name": "variable.other.member.object.abap",
+          "match": "(?i:(?<=->)!?/?[A-Z_][A-Z0-9_/]*\\b)"
+        },
+        {
+          "name": "variable.other.member.abap",
+          "match": "(?i:(?<=[-~])!?/?[A-Z_][A-Z0-9_/]*\\b)"
+        },
+        {
           "name": "variable.other.readwrite.abap",
-          "match": "(?i:!?/?[A-Z_][A-Z0-9_/]*(?:[-~][A-Z0-9_/]+)*)"
+          "match": "(?i:!?/?[A-Z_][A-Z0-9_/]*)"
         }
       ]
     },
@@ -2346,7 +2523,7 @@
       "patterns": [
         {
           "name": "punctuation.accessor.abap",
-          "match": "->|=>|~"
+          "match": "->|=>|~|(?i:(?<=[A-Z0-9_>\\]])-(?=[A-Z_]))"
         },
         {
           "name": "keyword.operator.abap",
