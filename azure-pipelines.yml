@@ -20,7 +20,7 @@ steps:
 
   - task: AzureCLI@2
     displayName: Resolve Marketplace identity resource ID
-    condition: eq(variables['resolveMarketplaceIdentity'], 'true')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     inputs:
       azureSubscription: $(azureServiceConnection)
       scriptType: bash
