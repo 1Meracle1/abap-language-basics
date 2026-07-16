@@ -134,7 +134,9 @@ suite("ABAP language basics", () => {
 
     const chains = grammar.repository["chained-declarations"].patterns;
     assert.ok(chains.some((pattern: { name: string }) =>
-      pattern.name === "meta.declaration.chain.member.abap"));
+      pattern.name === "meta.declaration.chain.method.abap"));
+    assert.ok(chains.some((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.chain.event.abap"));
     assert.ok(chains.some((pattern: { name: string }) =>
       pattern.name === "meta.declaration.chain.interface.abap"));
     assert.ok(chains.some((pattern: { name: string }) =>
@@ -232,6 +234,99 @@ suite("ABAP language basics", () => {
       "RENAMING", "SUFFIX",
     ]) {
       assert.match(keywordPatterns, new RegExp(`\\b${keyword}\\b`));
+    }
+  });
+
+  test("scopes ABAP OO signatures and event handlers contextually", () => {
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+
+    const codeIncludes = grammar.repository.code.patterns
+      .map((pattern: { include?: string }) => pattern.include);
+    assert.ok(codeIncludes.indexOf("#oo-declarations") <
+      codeIncludes.indexOf("#chained-declarations"));
+
+    const declarations = grammar.repository["oo-declarations"].patterns;
+    assert.ok(declarations.some((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.method.abap"));
+    assert.ok(declarations.some((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.event.abap"));
+
+    const chains = grammar.repository["chained-declarations"].patterns;
+    const methodChain = chains.find((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.chain.method.abap");
+    const eventChain = chains.find((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.chain.event.abap");
+    assert.ok(methodChain);
+    assert.ok(eventChain);
+    const methodHead = methodChain.patterns.find(
+      (pattern: { captures?: Record<string, { name: string }> }) =>
+        pattern.captures?.["1"]?.name ===
+          "entity.name.function.member.abap",
+    );
+    assert.ok(methodHead);
+    for (const guard of [
+      "FOR", "EVENT", "PREFERRED", "PARAMETER", "RAISING",
+      "EXCEPTIONS", "RESUMABLE",
+    ]) {
+      assert.match(methodHead.match, new RegExp(`\\b${guard}\\b`));
+    }
+
+    const signatures = grammar.repository["oo-signature"].patterns;
+    const signatureText = JSON.stringify(signatures);
+    for (const syntax of [
+      "FOR", "EVENT", "OF", "PREFERRED", "PARAMETER", "DEFAULT",
+      "IGNORE", "FAIL", "VALUE", "REFERENCE", "RESUMABLE",
+    ]) {
+      assert.match(signatureText, new RegExp(`\\b${syntax}\\b`));
+    }
+    for (const scope of [
+      "meta.declaration.parameters.abap",
+      "meta.declaration.exceptions.class.abap",
+      "meta.declaration.exceptions.classic.abap",
+    ]) {
+      assert.ok(signatures.some((pattern: { name?: string }) =>
+        pattern.name === scope));
+    }
+    for (const scope of [
+      "entity.name.function.event.abap",
+      "entity.name.type.abap",
+      "variable.parameter.declaration.abap",
+      "variable.parameter.reference.abap",
+      "entity.name.type.class.exception.abap",
+      "variable.parameter.exception.declaration.abap",
+    ]) {
+      assert.match(signatureText, new RegExp(scope.replaceAll(".", "\\.")));
+    }
+
+    const calls = grammar.repository.calls.patterns;
+    assert.ok(calls.some((pattern: {
+      captures?: Record<string, { name: string }>;
+    }) => pattern.captures?.["2"]?.name ===
+      "keyword.control.handler.abap"));
+
+    const globalKeywords = grammar.repository.keywords.patterns
+      .map((pattern: { match: string }) => pattern.match)
+      .join("\n");
+    for (const contextualKeyword of ["HANDLER", "PREFERRED", "FAIL"]) {
+      assert.doesNotMatch(
+        globalKeywords,
+        new RegExp(`\\b${contextualKeyword}\\b`),
+      );
+    }
+
+    const fixture = fs.readFileSync(
+      path.resolve(__dirname, "../test/fixtures/highlighting.abap"),
+      "utf8",
+    );
+    for (const syntax of [
+      "DEFAULT IGNORE", "PREFERRED PARAMETER", "DEFAULT FAIL",
+      "FOR EVENT finished OF lif_worker", "RESUMABLE(cx_static_check)",
+      "EXCEPTIONS invalid_number", "SET HANDLER",
+    ]) {
+      assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }
   });
 });

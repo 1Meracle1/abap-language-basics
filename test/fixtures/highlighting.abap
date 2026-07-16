@@ -64,6 +64,8 @@ START-OF-SELECTION.
 " Keywords inside selectors and qualified names must remain identifiers.
 IF sy-subrc = 0 AND ls_row-field IS NOT INITIAL.
   lo_object->method( ).
+  lo_object->handler( ).
+  lv_text = ls_row-preferred.
   zif_interface~method( ).
 ENDIF.
 
@@ -90,6 +92,22 @@ INTERFACE lif_worker.
     failed.
 ENDINTERFACE.
 
+INTERFACE lif_signature_variants.
+  METHODS normalize DEFAULT IGNORE
+    IMPORTING VALUE(iv_text) TYPE string DEFAULT ``
+    PREFERRED PARAMETER iv_text
+    RETURNING VALUE(rv_text) TYPE string
+    RAISING RESUMABLE(cx_static_check).
+  METHODS:
+    legacy DEFAULT FAIL
+      IMPORTING REFERENCE(iv_number) TYPE i OPTIONAL
+      EXCEPTIONS invalid_number,
+    on_finished FOR EVENT finished OF lif_worker
+      IMPORTING ev_output sender.
+  CLASS-EVENTS shutdown
+    EXPORTING VALUE(ev_reason) TYPE string OPTIONAL.
+ENDINTERFACE.
+
 CLASS lcl_factory DEFINITION DEFERRED.
 CLASS lcl_worker DEFINITION FINAL CREATE PRIVATE FRIENDS lcl_factory.
   PUBLIC SECTION.
@@ -110,6 +128,8 @@ CLASS lcl_worker DEFINITION FINAL CREATE PRIVATE FRIENDS lcl_factory.
       END OF ty_target.
     CLASS-DATA gv_instances TYPE i READ-ONLY.
     METHODS constructor.
+    METHODS on_finished FOR EVENT finished OF lif_worker
+      IMPORTING ev_output sender.
 ENDCLASS.
 
 FORM perform_action.
@@ -211,5 +231,10 @@ CLASS lcl_worker IMPLEMENTATION.
 
   METHOD constructor.
     gv_instances = gv_instances + 1.
+    SET HANDLER me->on_finished FOR ALL INSTANCES.
+  ENDMETHOD.
+
+  METHOD on_finished.
+    CLEAR gv_instances.
   ENDMETHOD.
 ENDCLASS.

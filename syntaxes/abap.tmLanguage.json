@@ -26,6 +26,9 @@
           "include": "#blocks"
         },
         {
+          "include": "#oo-declarations"
+        },
+        {
           "include": "#chained-declarations"
         },
         {
@@ -59,6 +62,17 @@
     },
     "calls": {
       "patterns": [
+        {
+          "match": "(?i:(?<![!\\-~>/])\\b(SET)[ \\t]+(HANDLER)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.set.abap"
+            },
+            "2": {
+              "name": "keyword.control.handler.abap"
+            }
+          }
+        },
         {
           "match": "(?i:(?<![!\\-~>/])\\b(CALL)[ \\t]+(FUNCTION)[ \\t]+('(?:''|[^'\\r\\n])*'))",
           "captures": {
@@ -531,11 +545,61 @@
         }
       ]
     },
+    "oo-declarations": {
+      "patterns": [
+        {
+          "name": "meta.declaration.method.abap",
+          "begin": "(?i:^[ \\t]*(CLASS-METHODS|METHODS)\\b(?![ \\t]*:)[ \\t]+(!?[/A-Z_][A-Z0-9_/~]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.function.abap"
+            },
+            "2": {
+              "name": "entity.name.function.member.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#oo-signature"
+            }
+          ]
+        },
+        {
+          "name": "meta.declaration.event.abap",
+          "begin": "(?i:^[ \\t]*(CLASS-EVENTS|EVENTS)\\b(?![ \\t]*:)[ \\t]+(!?[/A-Z_][A-Z0-9_/~]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.function.abap"
+            },
+            "2": {
+              "name": "entity.name.function.event.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#oo-signature"
+            }
+          ]
+        }
+      ]
+    },
     "chained-declarations": {
       "patterns": [
         {
-          "name": "meta.declaration.chain.member.abap",
-          "begin": "(?i:^[ \\t]*(CLASS-METHODS|METHODS|CLASS-EVENTS|EVENTS)[ \\t]*:)",
+          "name": "meta.declaration.chain.method.abap",
+          "begin": "(?i:^[ \\t]*(CLASS-METHODS|METHODS)[ \\t]*:)",
           "beginCaptures": {
             "1": {
               "name": "keyword.declaration.function.abap"
@@ -558,12 +622,70 @@
               "include": "#pragmas"
             },
             {
-              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(?!(?:IMPORTING|EXPORTING|CHANGING|RETURNING|RAISING|EXCEPTIONS)\\b)(!?[/A-Z_][A-Z0-9_/~]*)(?=[ \\t]*(?:$|[,.]|ABSTRACT\\b|FINAL\\b|REDEFINITION\\b|DEFAULT\\b|IMPORTING\\b|EXPORTING\\b|CHANGING\\b|RETURNING\\b|RAISING\\b|EXCEPTIONS\\b)))",
+              "include": "#oo-signature"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(?!(?:ABSTRACT|FINAL|DEFAULT|IGNORE|FAIL|FOR|EVENT|OF|TESTING|REDEFINITION|IMPORTING|EXPORTING|CHANGING|RETURNING|PREFERRED|PARAMETER|RAISING|EXCEPTIONS|RESUMABLE)\\b)(!?[/A-Z_][A-Z0-9_/~]*)(?=[ \\t]*(?:$|[,.]|ABSTRACT\\b|FINAL\\b|REDEFINITION\\b|DEFAULT\\b|FOR\\b|IMPORTING\\b|EXPORTING\\b|CHANGING\\b|RETURNING\\b|RAISING\\b|EXCEPTIONS\\b)))",
               "captures": {
                 "1": {
                   "name": "entity.name.function.member.abap"
                 }
               }
+            },
+            {
+              "include": "#composite-keywords"
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#constants"
+            },
+            {
+              "include": "#identifiers"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        },
+        {
+          "name": "meta.declaration.chain.event.abap",
+          "begin": "(?i:^[ \\t]*(CLASS-EVENTS|EVENTS)[ \\t]*:)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.function.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#oo-signature"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(?!(?:EXPORTING|VALUE|OPTIONAL)\\b)(!?[/A-Z_][A-Z0-9_/~]*)(?=[ \\t]*(?:$|[,.]|EXPORTING\\b)))",
+              "captures": {
+                "1": {
+                  "name": "entity.name.function.event.abap"
+                }
+              }
+            },
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#pragmas"
             },
             {
               "include": "#composite-keywords"
@@ -826,6 +948,210 @@
               "include": "#operators"
             }
           ]
+        }
+      ]
+    },
+    "oo-signature": {
+      "patterns": [
+        {
+          "match": "(?i:\\b(FOR)[ \\t]+(EVENT)[ \\t]+(!?[/A-Z_][A-Z0-9_/~]*)[ \\t]+(OF)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.event-handler.abap"
+            },
+            "2": {
+              "name": "keyword.other.event-handler.abap"
+            },
+            "3": {
+              "name": "entity.name.function.event.abap"
+            },
+            "4": {
+              "name": "keyword.other.event-handler.abap"
+            },
+            "5": {
+              "name": "entity.name.type.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(PREFERRED)[ \\t]+(PARAMETER)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.parameter.abap"
+            },
+            "2": {
+              "name": "keyword.other.parameter.abap"
+            },
+            "3": {
+              "name": "variable.parameter.reference.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(DEFAULT)[ \\t]+(IGNORE|FAIL)\\b)",
+          "captures": {
+            "1": {
+              "name": "storage.modifier.default.abap"
+            },
+            "2": {
+              "name": "storage.modifier.default.abap"
+            }
+          }
+        },
+        {
+          "name": "meta.declaration.parameters.abap",
+          "begin": "(?i:\\b(IMPORTING|EXPORTING|CHANGING|RETURNING)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.parameter.abap"
+            }
+          },
+          "end": "(?i:(?=\\b(?:PREFERRED|EXPORTING|CHANGING|RETURNING|RAISING|EXCEPTIONS)\\b|[,.]))",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "match": "(?i:\\b(VALUE|REFERENCE)[ \\t]*\\([ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*\\))",
+              "captures": {
+                "1": {
+                  "name": "storage.modifier.parameter.abap"
+                },
+                "2": {
+                  "name": "variable.parameter.declaration.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:(?<![-~>/])\\b(!?[/A-Z_][A-Z0-9_/]*)(?=[ \\t]+(?:TYPE|LIKE)\\b))",
+              "captures": {
+                "1": {
+                  "name": "variable.parameter.declaration.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:\\b(DEFAULT)[ \\t]+(!?/?[A-Z_][A-Z0-9_/-]*))",
+              "captures": {
+                "1": {
+                  "name": "storage.modifier.default.abap"
+                },
+                "2": {
+                  "name": "variable.other.reference.abap"
+                }
+              }
+            },
+            {
+              "include": "#declaration-types"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#composite-keywords"
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#constants"
+            },
+            {
+              "name": "variable.parameter.declaration.abap",
+              "match": "(?i:(?<![-~>/])\\b!?[/A-Z_][A-Z0-9_/]*\\b)"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        },
+        {
+          "name": "meta.declaration.exceptions.class.abap",
+          "begin": "(?i:\\b(RAISING)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.exception.abap"
+            }
+          },
+          "end": "(?=[,.])",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "match": "(?i:\\b(RESUMABLE)[ \\t]*\\([ \\t]*(!?/?[A-Z_][A-Z0-9_/]*)[ \\t]*\\))",
+              "captures": {
+                "1": {
+                  "name": "storage.modifier.exception.abap"
+                },
+                "2": {
+                  "name": "entity.name.type.class.exception.abap"
+                }
+              }
+            },
+            {
+              "name": "entity.name.type.class.exception.abap",
+              "match": "(?i:(?<![-~>/])\\b!?/?[A-Z_][A-Z0-9_/]*\\b)"
+            }
+          ]
+        },
+        {
+          "name": "meta.declaration.exceptions.classic.abap",
+          "begin": "(?i:\\b(EXCEPTIONS)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.exception.abap"
+            }
+          },
+          "end": "(?=[,.])",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "name": "variable.parameter.exception.declaration.abap",
+              "match": "(?i:(?<![-~>/])\\b!?[/A-Z_][A-Z0-9_/]*\\b)"
+            }
+          ]
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#pragmas"
+        },
+        {
+          "include": "#composite-keywords"
+        },
+        {
+          "include": "#keywords"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#identifiers"
+        },
+        {
+          "include": "#operators"
         }
       ]
     },
