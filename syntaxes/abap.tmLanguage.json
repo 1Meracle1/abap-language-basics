@@ -32,6 +32,9 @@
           "include": "#declarations"
         },
         {
+          "include": "#declaration-types"
+        },
+        {
           "include": "#composite-keywords"
         },
         {
@@ -444,7 +447,18 @@
           }
         },
         {
-          "match": "(?i:(?<![-~>/])\\b(DATA|CONSTANTS|STATICS|TYPES|PARAMETERS|RANGES)\\b[ \\t]*:?[ \\t]*(!?[/A-Z_][A-Z0-9_/]*))",
+          "match": "(?i:(?<![-~>/])\\b(TYPES)\\b[ \\t]*:?[ \\t]*(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            },
+            "2": {
+              "name": "entity.name.type.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(DATA|CONSTANTS|STATICS|PARAMETERS|RANGES)\\b[ \\t]*:?[ \\t]*(!?[/A-Z_][A-Z0-9_/]*))",
           "captures": {
             "1": {
               "name": "keyword.declaration.abap"
@@ -646,8 +660,8 @@
           ]
         },
         {
-          "name": "meta.declaration.chain.abap",
-          "begin": "(?i:^[ \\t]*(DATA|CONSTANTS|STATICS|TYPES|PARAMETERS|RANGES|CLASS-DATA|FIELD-SYMBOLS)\\b[ \\t]*:)",
+          "name": "meta.declaration.chain.type.abap",
+          "begin": "(?i:^[ \\t]*(TYPES)\\b[ \\t]*:)",
           "beginCaptures": {
             "1": {
               "name": "keyword.declaration.abap"
@@ -670,26 +684,18 @@
               "include": "#pragmas"
             },
             {
-              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(BEGIN|END)[ \\t]+(OF)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+              "include": "#structured-type"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(!?[/A-Z_][A-Z0-9_/]*)(?=[ \\t]+(?:TYPE|LIKE)\\b))",
               "captures": {
                 "1": {
-                  "name": "keyword.other.abap"
-                },
-                "2": {
-                  "name": "keyword.other.abap"
-                },
-                "3": {
                   "name": "entity.name.type.abap"
                 }
               }
             },
             {
-              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(<[/A-Z_][A-Z0-9_/]*>|!?[/A-Z_][A-Z0-9_/]*))",
-              "captures": {
-                "1": {
-                  "name": "variable.other.readwrite.declaration.abap"
-                }
-              }
+              "include": "#declaration-types"
             },
             {
               "include": "#composite-keywords"
@@ -710,6 +716,332 @@
               "include": "#operators"
             }
           ]
+        },
+        {
+          "name": "meta.declaration.chain.data.abap",
+          "begin": "(?i:^[ \\t]*(DATA|CONSTANTS|STATICS|PARAMETERS|RANGES|CLASS-DATA)\\b[ \\t]*:)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "include": "#structured-data"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(!?[/A-Z_][A-Z0-9_/]*)(?=[ \\t]+(?:TYPE|LIKE|VALUE|READ-ONLY)\\b|[ \\t]*(?:,|\\.)))",
+              "captures": {
+                "1": {
+                  "name": "variable.other.declaration.abap"
+                }
+              }
+            },
+            {
+              "include": "#declaration-types"
+            },
+            {
+              "include": "#composite-keywords"
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#constants"
+            },
+            {
+              "include": "#identifiers"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        },
+        {
+          "name": "meta.declaration.chain.field-symbol.abap",
+          "begin": "(?i:^[ \\t]*(FIELD-SYMBOLS)\\b[ \\t]*:)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(<[/A-Z_][A-Z0-9_/]*>))",
+              "captures": {
+                "1": {
+                  "name": "variable.other.readwrite.declaration.abap"
+                }
+              }
+            },
+            {
+              "include": "#declaration-types"
+            },
+            {
+              "include": "#composite-keywords"
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#constants"
+            },
+            {
+              "include": "#identifiers"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        }
+      ]
+    },
+    "structured-type": {
+      "patterns": [
+        {
+          "name": "meta.declaration.structure.type.abap",
+          "begin": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(BEGIN)[ \\t]+(OF)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.abap"
+            },
+            "2": {
+              "name": "keyword.other.abap"
+            },
+            "3": {
+              "name": "entity.name.type.abap"
+            }
+          },
+          "end": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(END)[ \\t]+(OF)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.other.abap"
+            },
+            "2": {
+              "name": "keyword.other.abap"
+            },
+            "3": {
+              "name": "entity.name.type.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#structured-type"
+            },
+            {
+              "include": "#structured-components"
+            }
+          ]
+        }
+      ]
+    },
+    "structured-data": {
+      "patterns": [
+        {
+          "name": "meta.declaration.structure.data.abap",
+          "begin": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(BEGIN)[ \\t]+(OF)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.abap"
+            },
+            "2": {
+              "name": "keyword.other.abap"
+            },
+            "3": {
+              "name": "variable.other.member.declaration.abap"
+            }
+          },
+          "end": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(END)[ \\t]+(OF)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.other.abap"
+            },
+            "2": {
+              "name": "keyword.other.abap"
+            },
+            "3": {
+              "name": "variable.other.member.declaration.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#structured-data"
+            },
+            {
+              "include": "#structured-components"
+            }
+          ]
+        }
+      ]
+    },
+    "structured-components": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#pragmas"
+        },
+        {
+          "include": "#declaration-types"
+        },
+        {
+          "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(!?[/A-Z_][A-Z0-9_/]*)(?=[ \\t]+(?:TYPE|LIKE|VALUE|READ-ONLY|BOXED)\\b))",
+          "captures": {
+            "1": {
+              "name": "variable.other.member.declaration.abap"
+            }
+          }
+        },
+        {
+          "include": "#composite-keywords"
+        },
+        {
+          "include": "#keywords"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#identifiers"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
+    "declaration-types": {
+      "patterns": [
+        {
+          "match": "(?i:(?<![-~>/])\\b(INCLUDE)[ \\t]+(TYPE)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*(?:=>[A-Z0-9_/]+)?)(?:[ \\t]+(AS)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*)(?:[ \\t]+(RENAMING)[ \\t]+(WITH)[ \\t]+(SUFFIX)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))?)?)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            },
+            "2": {
+              "name": "storage.type.abap"
+            },
+            "3": {
+              "name": "entity.name.type.abap"
+            },
+            "4": {
+              "name": "keyword.other.abap"
+            },
+            "5": {
+              "name": "variable.other.member.declaration.abap"
+            },
+            "6": {
+              "name": "keyword.other.abap"
+            },
+            "7": {
+              "name": "keyword.other.abap"
+            },
+            "8": {
+              "name": "keyword.other.abap"
+            },
+            "9": {
+              "name": "constant.other.suffix.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(INCLUDE)[ \\t]+(STRUCTURE)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*(?:[-~][A-Z0-9_/]+)*)(?:[ \\t]+(AS)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*)(?:[ \\t]+(RENAMING)[ \\t]+(WITH)[ \\t]+(SUFFIX)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))?)?)",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            },
+            "2": {
+              "name": "storage.type.abap"
+            },
+            "3": {
+              "name": "variable.other.reference.abap"
+            },
+            "4": {
+              "name": "keyword.other.abap"
+            },
+            "5": {
+              "name": "variable.other.member.declaration.abap"
+            },
+            "6": {
+              "name": "keyword.other.abap"
+            },
+            "7": {
+              "name": "keyword.other.abap"
+            },
+            "8": {
+              "name": "keyword.other.abap"
+            },
+            "9": {
+              "name": "constant.other.suffix.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(TYPE)([ \\t]+(?:(?:(?:(?:STANDARD|SORTED|HASHED|ANY|INDEX)[ \\t]+)?TABLE[ \\t]+OF[ \\t]+)(?:REF[ \\t]+TO[ \\t]+)?|RANGE[ \\t]+OF[ \\t]+|LINE[ \\t]+OF[ \\t]+|REF[ \\t]+TO[ \\t]+)?)(?!(?:ANY|BYTE|C|CHARACTER|CLIKE|CSEQUENCE|D|DATA|DECFLOAT16|DECFLOAT34|F|HASHED|I|INDEX|INT1|INT2|INT4|INT8|N|NUMERIC|OBJECT|P|SIMPLE|SORTED|STANDARD|STRING|STRUCTURE|TABLE|X|XSEQUENCE|XSTRING)\\b)(!?/?[A-Z_][A-Z0-9_/]*(?:(?:=>|~)[A-Z0-9_/]+)?))",
+          "captures": {
+            "1": {
+              "name": "storage.type.abap"
+            },
+            "2": {
+              "name": "storage.type.abap"
+            },
+            "3": {
+              "name": "entity.name.type.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(LIKE)([ \\t]+(?:(?:(?:(?:STANDARD|SORTED|HASHED|ANY|INDEX)[ \\t]+)?TABLE|LINE|RANGE)[ \\t]+OF[ \\t]+|REF[ \\t]+TO[ \\t]+)?)(!?/?[A-Z_][A-Z0-9_/]*(?:[-~][A-Z0-9_/]+)*))",
+          "captures": {
+            "1": {
+              "name": "storage.type.abap"
+            },
+            "2": {
+              "name": "storage.type.abap"
+            },
+            "3": {
+              "name": "variable.other.reference.abap"
+            }
+          }
         }
       ]
     },
@@ -741,7 +1073,7 @@
         },
         {
           "name": "keyword.other.abap",
-          "match": "(?i:(?<![!\\-~>/])\\b(?:ACCEPTING|ADJACENT|ALL|AND|APPENDING|AS|ASCENDING|ASSIGNED|ASSIGNING|ASYNCHRONOUS|BADI|BASE|BETWEEN|BINARY|BLANKS|BLOCK|BOUND|BUFFER|BYPASSING|BY|BYTE|CALLING|CAST|CASTING|CHANGING|CHECKBOX|CLIENT|COMMENT|COMPARING|COMPONENTS|CONNECTION|CONSTANTS|CORRESPONDING|CRITICAL|CURRENT|CURSOR|DATABASE|DEFAULT|DEEP|DEFERRED|DELETING|DESCENDING|DESTINATION|DISPLAY|DISTINCT|DUPLICATES|DURATION|EMPTY|ENABLED|ENTRIES|ENUM|EVENT|EVENTS|EXCEPT|EXCEPTION|EXCEPTIONS|EXPORTING|EXTENSION|FIELDS|FILTER|FILTERS|FINAL|FIRST|FOR|FRAME|FRIENDS|FROM|GAPS|GROUP|HARMLESS|HAVING|ID|IGNORING|IMPLEMENTATION|IMPORTING|IN|INHERITING|INIT|INNER|INSTANCE|INTERFACES|INTERVALS|INTO|JOIN|KEY|LENGTH|LET|LINE|LINES|LONG|LOWER|MAPPING|MATCH|MATCHCODE|MEDIUM|MEMORY|MODIF|MOVE|NEXT|NO|NON|NOT|OBLIGATORY|OCCURRENCE|OCCURRENCES|OF|ON|OPTION|OPTIONAL|OR|ORDER|OTHERS|OUTER|PACKAGE|PLACES|PRIMARY|PRIVATE|PROGRAM|PROTECTED|PUBLIC|PUSHBUTTON|RADIOBUTTON|RAISING|RECEIVING|REDEFINITION|REDUCE|REFRESH|REGEX|RESUMABLE|RETURNING|RISK|ROWS|SCREEN|SECONDS|SECTION|SELECTION|SEPARATED|SHARED|SIGN|SHORT|SINGLE|SIZE|SPECIFIED|STABLE|STARTING|STATIC|STATICS|SUBMATCHES|SUPPLIED|TASK|TESTING|THEN|TITLE|TIME|STAMP|TO|TRANSPORTING|TRAILING|UNION|UNIQUE|UNTIL|UP|USING|VALUE|VALUES|VISIBLE|WHERE|WITH|WORK|ZONE)\\b(?![-~/]))"
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ACCEPTING|ADJACENT|ALL|ALIAS|AND|APPENDING|AS|ASCENDING|ASSIGNED|ASSIGNING|ASYNCHRONOUS|BADI|BASE|BETWEEN|BINARY|BLANKS|BLOCK|BOUND|BOXED|BUFFER|BYPASSING|BY|BYTE|CALLING|CAST|CASTING|CHANGING|CHECKBOX|CLIENT|COMMENT|COMPARING|COMPONENTS|CONNECTION|CONSTANTS|CORRESPONDING|CRITICAL|CURRENT|CURSOR|DATABASE|DECIMALS|DEFAULT|DEEP|DEFERRED|DELETING|DESCENDING|DESTINATION|DISPLAY|DISTINCT|DUPLICATES|DURATION|EMPTY|ENABLED|ENTRIES|ENUM|EVENT|EVENTS|EXCEPT|EXCEPTION|EXCEPTIONS|EXPORTING|EXTENSION|FIELDS|FILTER|FILTERS|FINAL|FIRST|FOR|FRAME|FRIENDS|FROM|GAPS|GROUP|HARMLESS|HAVING|ID|IGNORING|IMPLEMENTATION|IMPORTING|IN|INHERITING|INIT|INITIAL|INNER|INSTANCE|INTERFACES|INTERVALS|INTO|JOIN|KEY|LENGTH|LET|LINE|LINES|LONG|LOWER|MAPPING|MATCH|MATCHCODE|MEDIUM|MEMORY|MODIF|MOVE|NEXT|NO|NON|NOT|OBLIGATORY|OCCURRENCE|OCCURRENCES|OF|ON|OPTION|OPTIONAL|OR|ORDER|OTHERS|OUTER|PACKAGE|PLACES|PRIMARY|PRIVATE|PROGRAM|PROTECTED|PUBLIC|PUSHBUTTON|RADIOBUTTON|RAISING|RANGE|RECEIVING|REDEFINITION|REDUCE|REFRESH|REGEX|RENAMING|RESUMABLE|RETURNING|RISK|ROWS|SCREEN|SECONDS|SECTION|SELECTION|SEPARATED|SHARED|SIGN|SHORT|SINGLE|SIZE|SPECIFIED|STABLE|STARTING|STATIC|STATICS|SUBMATCHES|SUFFIX|SUPPLIED|TASK|TESTING|THEN|TITLE|TIME|STAMP|TO|TRANSPORTING|TRAILING|UNION|UNIQUE|UNTIL|UP|USING|VALUE|VALUES|VISIBLE|WHERE|WITH|WORK|ZONE)\\b(?![-~/]))"
         },
         {
           "name": "keyword.operator.word.abap",

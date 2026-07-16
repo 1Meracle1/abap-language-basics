@@ -139,6 +139,14 @@ suite("ABAP language basics", () => {
       pattern.name === "meta.declaration.chain.interface.abap"));
     assert.ok(chains.some((pattern: { name: string }) =>
       pattern.name === "meta.declaration.chain.alias.abap"));
+    for (const scope of [
+      "meta.declaration.chain.type.abap",
+      "meta.declaration.chain.data.abap",
+      "meta.declaration.chain.field-symbol.abap",
+    ]) {
+      assert.ok(chains.some((pattern: { name: string }) =>
+        pattern.name === scope));
+    }
 
     const constants = grammar.repository.constants.patterns;
     assert.ok(constants.some((pattern: { name: string }) =>
@@ -161,6 +169,70 @@ suite("ABAP language basics", () => {
       (pattern: { name: string }) =>
         pattern.name === "keyword.operator.host-variable.abap",
     ));
+  });
+
+  test("scopes structured, table, reference, and LIKE declarations", () => {
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+
+    const chains = grammar.repository["chained-declarations"].patterns;
+    const typeChain = chains.find((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.chain.type.abap");
+    const dataChain = chains.find((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.chain.data.abap");
+    assert.ok(typeChain);
+    assert.ok(dataChain);
+    assert.ok(typeChain.patterns.some((pattern: { include?: string }) =>
+      pattern.include === "#structured-type"));
+    assert.ok(dataChain.patterns.some((pattern: { include?: string }) =>
+      pattern.include === "#structured-data"));
+    assert.strictEqual(
+      grammar.repository["structured-type"].patterns[0].name,
+      "meta.declaration.structure.type.abap",
+    );
+    assert.strictEqual(
+      grammar.repository["structured-data"].patterns[0].name,
+      "meta.declaration.structure.data.abap",
+    );
+
+    const components = grammar.repository["structured-components"].patterns;
+    assert.ok(components.some((pattern: {
+      captures?: Record<string, { name: string }>;
+    }) => pattern.captures?.["1"]?.name ===
+      "variable.other.member.declaration.abap"));
+
+    const typeReferences = grammar.repository["declaration-types"].patterns;
+    const matches = typeReferences
+      .map((pattern: { match: string }) => pattern.match)
+      .join("\n");
+    for (const syntax of [
+      "INCLUDE", "STRUCTURE", "STANDARD", "SORTED", "HASHED",
+      "TABLE", "RANGE", "LINE", "REF",
+    ]) {
+      assert.match(matches, new RegExp(`\\b${syntax}\\b`));
+    }
+    for (const scope of [
+      "entity.name.type.abap",
+      "variable.other.reference.abap",
+    ]) {
+      assert.ok(typeReferences.some((pattern: {
+        captures: Record<string, { name: string }>;
+      }) => Object.values(pattern.captures).some(
+        capture => capture.name === scope,
+      )));
+    }
+
+    const keywordPatterns = grammar.repository.keywords.patterns
+      .map((pattern: { match: string }) => pattern.match)
+      .join("\n");
+    for (const keyword of [
+      "ALIAS", "BOXED", "DECIMALS", "INITIAL", "RANGE",
+      "RENAMING", "SUFFIX",
+    ]) {
+      assert.match(keywordPatterns, new RegExp(`\\b${keyword}\\b`));
+    }
   });
 });
 

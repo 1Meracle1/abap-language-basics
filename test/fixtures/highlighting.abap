@@ -12,7 +12,29 @@ TEST-INJECTION TEST-SEAM TOP-OF-PAGE TYPE-POOLS USER-COMMAND VALUE-REQUEST.
 
 " Executable report and selection-screen declarations and events.
 REPORT z_highlighting_demo LINE-SIZE 120 LINE-COUNT 60 MESSAGE-ID zmsg.
+TYPES:
+  BEGIN OF ty_report_state,
+    report_name TYPE c LENGTH 40,
+    BEGIN OF counts,
+      selected TYPE i,
+      rejected TYPE i,
+    END OF counts,
+  END OF ty_report_state,
+  ty_report_states TYPE SORTED TABLE OF ty_report_state
+    WITH UNIQUE KEY report_name,
+  ty_report_state_ref TYPE REF TO ty_report_state,
+  ty_report_range TYPE RANGE OF syrepid.
 DATA gv_button TYPE string.
+DATA:
+  BEGIN OF gs_runtime,
+    INCLUDE TYPE ty_report_state AS state RENAMING WITH SUFFIX _runtime,
+    started_at TYPE timestampl,
+  END OF gs_runtime,
+  gt_messages TYPE STANDARD TABLE OF string WITH EMPTY KEY,
+  gr_runtime TYPE REF TO data.
+FIELD-SYMBOLS:
+  <ls_runtime> TYPE any,
+  <lt_messages> TYPE ANY TABLE.
 
 SELECTION-SCREEN BEGIN OF BLOCK b_main WITH FRAME TITLE text-t01.
 PARAMETERS p_check AS CHECKBOX USER-COMMAND refresh MODIF ID main.

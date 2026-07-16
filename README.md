@@ -8,10 +8,11 @@ fallback without starting a language server.
 The TextMate grammar is lexical: it recognizes comments, strings, templates,
 ABAP dash-composite keywords, declarations, executable reports and selection
 screens, class and interface constructs, chained component declarations,
-constructor operators, Open SQL clauses, core statement families, system
-fields, text symbols, and nested named/control-flow blocks. It guards selectors
-such as `sy-subrc`, `lo_object->method`, and `zif_interface~method` from partial
-keyword matches. It does not resolve names or parse complete ABAP syntax.
+structured data and type declarations, table and reference types, constructor
+operators, Open SQL clauses, core statement families, system fields, text
+symbols, and nested named/control-flow blocks. It guards selectors such as
+`sy-subrc`, `lo_object->method`, and `zif_interface~method` from partial keyword
+matches. It does not resolve names or parse complete ABAP syntax.
 
 Without a document-symbol provider, Sticky Scroll falls back to the language's
 folding markers. Named units and `IF`, `CASE`, `DO`, `WHILE`, `LOOP`, `TRY`, and
