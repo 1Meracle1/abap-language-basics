@@ -18,6 +18,20 @@ steps:
   - checkout: self
     persistCredentials: false
 
+  - task: AzureCLI@2
+    displayName: Resolve Marketplace identity resource ID
+    condition: eq(variables['resolveMarketplaceIdentity'], 'true')
+    inputs:
+      azureSubscription: $(azureServiceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az rest \
+          --url https://app.vssps.visualstudio.com/_apis/profile/profiles/me \
+          --resource 499b84ac-1321-427f-aa17-267ca6975798 \
+          --query id \
+          --output tsv
+
   - task: NodeTool@0
     inputs:
       versionSpec: 22.x
