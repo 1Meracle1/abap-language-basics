@@ -29,6 +29,9 @@
           "include": "#blocks"
         },
         {
+          "include": "#string-processing-statements"
+        },
+        {
           "include": "#modify-statements"
         },
         {
@@ -273,6 +276,152 @@
         },
         {
           "include": "#operators"
+        }
+      ]
+    },
+    "string-processing-statements": {
+      "patterns": [
+        {
+          "name": "meta.statement.string-processing.abap",
+          "begin": "(?i:^[ \\t]*(FIND|REPLACE|CONCATENATE|SPLIT|SHIFT|TRANSLATE|CONDENSE)\\b(?!-))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.string-processing.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "match": "(?i:\\b(FIRST|ALL)[ \\t]+(OCCURRENCE|OCCURRENCES)[ \\t]+(OF)\\b)",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "2": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "3": {
+                  "name": "keyword.other.string-processing.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:\\b(IN)[ \\t]+(CHARACTER|BYTE)[ \\t]+(MODE)\\b)",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "2": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "3": {
+                  "name": "keyword.other.string-processing.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:\\b(IGNORING)[ \\t]+(CASE)\\b)",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "2": {
+                  "name": "keyword.other.string-processing.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:\\b(MATCH|REPLACEMENT)[ \\t]+(COUNT|OFFSET|LENGTH)\\b)",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "2": {
+                  "name": "keyword.other.string-processing.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:\\b(LINES)[ \\t]+(OF)\\b)",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "2": {
+                  "name": "keyword.other.string-processing.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:\\b(SEPARATED)[ \\t]+(BY)\\b)",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "2": {
+                  "name": "keyword.other.string-processing.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:\\b(DELETING)[ \\t]+(LEADING|TRAILING)\\b)",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "2": {
+                  "name": "keyword.other.string-processing.abap"
+                }
+              }
+            },
+            {
+              "match": "(?i:\\b(TO)[ \\t]+(UPPER|LOWER)[ \\t]+(CASE)\\b)",
+              "captures": {
+                "1": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "2": {
+                  "name": "keyword.other.string-processing.abap"
+                },
+                "3": {
+                  "name": "keyword.other.string-processing.abap"
+                }
+              }
+            },
+            {
+              "name": "keyword.other.string-processing.abap",
+              "match": "(?i:(?<![-~>/])\\b(?:ALL|AT|BY|BYTE|CASE|CHARACTER|CIRCULAR|COUNT|IGNORING|IN|INTO|LENGTH|MATCH|MODE|NO-GAPS|OCCURRENCE|OCCURRENCES|OF|OFFSET|PLACES|REGEX|REPLACEMENT|RESPECTING|RESULTS|SECTION|SEPARATED|SUBMATCHES|SUBSTRING|TABLE|UPPER|LOWER|USING|WITH)\\b(?![-~/]))"
+            },
+            {
+              "include": "#declarations"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#constants"
+            },
+            {
+              "include": "#identifiers"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
         }
       ]
     },

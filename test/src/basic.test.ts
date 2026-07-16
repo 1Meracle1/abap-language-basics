@@ -596,6 +596,50 @@ suite("ABAP language basics", () => {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }
   });
+
+  test("scopes character and byte string processing statements", async () => {
+    const document = await openFixture("string-processing.abap");
+    await vscode.window.showTextDocument(document);
+    assert.strictEqual(document.languageId, "abap");
+
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+    const statement = grammar.repository["string-processing-statements"]
+      .patterns[0];
+    assert.strictEqual(statement.name, "meta.statement.string-processing.abap");
+    for (const keyword of [
+      "FIND", "REPLACE", "CONCATENATE", "SPLIT", "SHIFT", "TRANSLATE",
+      "CONDENSE",
+    ]) {
+      assert.match(statement.begin, new RegExp(`\\b${keyword}\\b`));
+    }
+
+    const tokenText = JSON.stringify(statement.patterns);
+    for (const addition of [
+      "OCCURRENCES", "REGEX", "IGNORING", "MATCH", "REPLACEMENT",
+      "RESULTS", "SECTION", "OFFSET", "SUBMATCHES", "SEPARATED",
+      "RESPECTING", "CIRCULAR", "DELETING", "LEADING", "NO-GAPS",
+    ]) {
+      assert.match(tokenText, new RegExp(`\\b${addition}\\b`));
+    }
+    assert.match(tokenText, /keyword\.other\.string-processing\.abap/);
+
+    const fixture = fs.readFileSync(
+      path.resolve(__dirname, "../test/fixtures/string-processing.abap"),
+      "utf8",
+    );
+    for (const syntax of [
+      "FIND ALL OCCURRENCES OF REGEX", "IGNORING CASE", "MATCH COUNT",
+      "REPLACE SECTION OFFSET", "REPLACEMENT COUNT", "SPLIT lv_text",
+      "INTO TABLE", "CONCATENATE LINES OF", "SEPARATED BY",
+      "RESPECTING BLANKS", "RIGHT CIRCULAR", "DELETING LEADING",
+      "TO UPPER CASE", "CONDENSE lv_text NO-GAPS",
+    ]) {
+      assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
+    }
+  });
 });
 
 function openFixture(name: string): Thenable<vscode.TextDocument> {

@@ -1,0 +1,28 @@
+DATA lv_text TYPE string VALUE `one two three`.
+
+FIND ALL OCCURRENCES OF REGEX `[[:alpha:]]+`
+  IN lv_text IGNORING CASE
+  MATCH COUNT DATA(lv_match_count)
+  RESULTS DATA(lt_results).
+FIND FIRST OCCURRENCE OF `two`
+  IN SECTION OFFSET 1 LENGTH 10 OF lv_text
+  MATCH OFFSET DATA(lv_match_offset)
+  MATCH LENGTH DATA(lv_match_length).
+
+REPLACE ALL OCCURRENCES OF REGEX `[[:space:]]+`
+  IN lv_text WITH ` `
+  REPLACEMENT COUNT DATA(lv_replacement_count).
+REPLACE SECTION OFFSET 0 LENGTH 3 OF lv_text WITH `ONE`.
+
+SPLIT lv_text AT ` ` INTO TABLE DATA(lt_parts)
+  IN CHARACTER MODE.
+CONCATENATE LINES OF lt_parts INTO DATA(lv_joined)
+  IN CHARACTER MODE
+  SEPARATED BY `,`
+  RESPECTING BLANKS.
+
+SHIFT lv_text BY 2 PLACES RIGHT CIRCULAR.
+SHIFT lv_text LEFT DELETING LEADING space.
+TRANSLATE lv_text TO UPPER CASE.
+TRANSLATE lv_text USING 'ABBAabba'.
+CONDENSE lv_text NO-GAPS.
