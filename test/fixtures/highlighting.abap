@@ -57,18 +57,24 @@ INTERFACE lif_example.
 ENDINTERFACE.
 
 INTERFACE lif_worker.
-  METHODS run
-    IMPORTING iv_input TYPE string
-    RETURNING VALUE(rv_output) TYPE string
-    RAISING cx_static_check.
-  EVENTS finished EXPORTING VALUE(ev_output) TYPE string.
+  METHODS:
+    run
+      IMPORTING iv_input TYPE string
+      RETURNING VALUE(rv_output) TYPE string
+      RAISING cx_static_check,
+    reset.
+  EVENTS:
+    finished EXPORTING VALUE(ev_output) TYPE string,
+    failed.
 ENDINTERFACE.
 
 CLASS lcl_factory DEFINITION DEFERRED.
 CLASS lcl_worker DEFINITION FINAL CREATE PRIVATE FRIENDS lcl_factory.
   PUBLIC SECTION.
-    INTERFACES lif_worker.
-    ALIASES run FOR lif_worker~run.
+    INTERFACES: lif_worker.
+    ALIASES:
+      run FOR lif_worker~run,
+      reset FOR lif_worker~reset.
     CLASS-METHODS create
       RETURNING VALUE(ro_worker) TYPE REF TO lcl_worker.
   PRIVATE SECTION.
@@ -112,6 +118,16 @@ ENDCLASS.
 SELECT carrid FROM scarr INTO @DATA(lv_carrid).
 ENDSELECT.
 
+SELECT FROM scarr AS carrier
+  INNER JOIN spfli AS connection
+    ON connection~carrid = carrier~carrid
+  FIELDS carrier~carrid, COUNT( * ) AS connection_count
+  WHERE carrier~carrid <> @space
+  GROUP BY carrier~carrid
+  HAVING COUNT( * ) > 0
+  ORDER BY carrier~carrid ASCENDING
+  INTO TABLE @DATA(lt_connection_counts).
+
 CLASS lcl_example IMPLEMENTATION.
   METHOD run.
     IF sy-subrc = 0.
@@ -123,6 +139,14 @@ ENDCLASS.
 
 CLASS lcl_worker IMPLEMENTATION.
   METHOD lif_worker~run.
+    DATA lt_copy TYPE ty_numbers.
+    APPEND 1 TO lt_copy.
+    INSERT 2 INTO TABLE lt_copy.
+    READ TABLE lt_copy INTO DATA(lv_first) INDEX 1.
+    SORT lt_copy DESCENDING.
+    DELETE lt_copy WHERE table_line = lv_first.
+    CLEAR lt_copy.
+    ASSIGN rv_output TO FIELD-SYMBOL(<lv_output>).
     DATA(lt_numbers) = VALUE ty_numbers( ( 1 ) ( 2 ) ).
     DATA(lt_more) = VALUE ty_numbers( BASE lt_numbers ( 3 ) ).
     DATA(lt_filtered) = FILTER #( lt_more WHERE table_line > 1 ).
@@ -136,6 +160,7 @@ CLASS lcl_worker IMPLEMENTATION.
       NEXT total = total + number
     ).
     DATA(lv_text) = CONV string( lv_total ).
+    lv_text = |{ text-c01 }: { sy-subrc }|.
     DATA(lv_exact) = EXACT i( lv_text ).
     DATA(lv_result) = COND string(
       LET normalized = to_upper( iv_input ) IN
@@ -152,6 +177,10 @@ CLASS lcl_worker IMPLEMENTATION.
       cl_abap_typedescr=>describe_by_data( rv_output )
     ).
     RAISE EVENT lif_worker~finished EXPORTING ev_output = rv_output.
+  ENDMETHOD.
+
+  METHOD lif_worker~reset.
+    CLEAR gv_instances.
   ENDMETHOD.
 
   METHOD create.

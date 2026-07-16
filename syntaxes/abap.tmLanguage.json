@@ -433,6 +433,17 @@
           }
         },
         {
+          "match": "(?i:(?<![-~>/])\\b(FIELD-SYMBOL)[ \\t]*\\([ \\t]*(<[/A-Z_][A-Z0-9_/]*>)[ \\t]*\\))",
+          "captures": {
+            "1": {
+              "name": "keyword.declaration.variable.abap"
+            },
+            "2": {
+              "name": "variable.other.readwrite.declaration.abap"
+            }
+          }
+        },
+        {
           "match": "(?i:(?<![-~>/])\\b(DATA|CONSTANTS|STATICS|TYPES|PARAMETERS|RANGES)\\b[ \\t]*:?[ \\t]*(!?[/A-Z_][A-Z0-9_/]*))",
           "captures": {
             "1": {
@@ -509,6 +520,132 @@
     "chained-declarations": {
       "patterns": [
         {
+          "name": "meta.declaration.chain.member.abap",
+          "begin": "(?i:^[ \\t]*(CLASS-METHODS|METHODS|CLASS-EVENTS|EVENTS)[ \\t]*:)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.function.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(?!(?:IMPORTING|EXPORTING|CHANGING|RETURNING|RAISING|EXCEPTIONS)\\b)(!?[/A-Z_][A-Z0-9_/~]*)(?=[ \\t]*(?:$|[,.]|ABSTRACT\\b|FINAL\\b|REDEFINITION\\b|DEFAULT\\b|IMPORTING\\b|EXPORTING\\b|CHANGING\\b|RETURNING\\b|RAISING\\b|EXCEPTIONS\\b)))",
+              "captures": {
+                "1": {
+                  "name": "entity.name.function.member.abap"
+                }
+              }
+            },
+            {
+              "include": "#composite-keywords"
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#numbers"
+            },
+            {
+              "include": "#constants"
+            },
+            {
+              "include": "#identifiers"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        },
+        {
+          "name": "meta.declaration.chain.interface.abap",
+          "begin": "(?i:^[ \\t]*(INTERFACES)[ \\t]*:)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.interface.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(!?[/A-Z_][A-Z0-9_/]*))",
+              "captures": {
+                "1": {
+                  "name": "entity.name.type.interface.abap"
+                }
+              }
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#identifiers"
+            }
+          ]
+        },
+        {
+          "name": "meta.declaration.chain.alias.abap",
+          "begin": "(?i:^[ \\t]*(ALIASES)[ \\t]*:)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.declaration.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#pragmas"
+            },
+            {
+              "match": "(?i:(?:\\G|^[ \\t]*|(?<=,)[ \\t]*)(!?[/A-Z_][A-Z0-9_/]*))",
+              "captures": {
+                "1": {
+                  "name": "entity.name.function.member.abap"
+                }
+              }
+            },
+            {
+              "include": "#keywords"
+            },
+            {
+              "include": "#identifiers"
+            }
+          ]
+        },
+        {
           "name": "meta.declaration.chain.abap",
           "begin": "(?i:^[ \\t]*(DATA|CONSTANTS|STATICS|TYPES|PARAMETERS|RANGES|CLASS-DATA|FIELD-SYMBOLS)\\b[ \\t]*:)",
           "beginCaptures": {
@@ -580,7 +717,7 @@
       "patterns": [
         {
           "name": "keyword.control.abap",
-          "match": "(?i:(?<![!\\-~>/])\\b(?:AUTHORITY-CHECK|BIT-AND|BIT-OR|BIT-XOR|BREAK-POINT|BYTE-ORDER|CLASS-DATA|CLASS-EVENTS|CLASS-METHODS|CUSTOMER-FUNCTION|END-ENHANCEMENT-SECTION|END-OF-DEFINITION|END-OF-PAGE|END-OF-SELECTION|END-TEST-INJECTION|END-TEST-SEAM|ENHANCEMENT-SECTION|EXCEPTION-TABLE|EXIT-COMMAND|FIELD-GROUPS|FIELD-SYMBOLS|FUNCTION-POOL|HELP-REQUEST|LINE-COUNT|LINE-SELECTION|LINE-SIZE|LIST-PROCESSING|LOAD-OF-PROGRAM|LOG-POINT|MESSAGE-ID|MOVE-CORRESPONDING|NEW-LINE|NEW-PAGE|NO-DISPLAY|NO-EXTENSION|NO-GAPS|NON-UNIQUE|PARAMETER-TABLE|PF-STATUS|READ-ONLY|SAP-SPOOL|SELECT-OPTIONS|SELECTION-SCREEN|SELECTION-SET|SELECTION-SETS|SELECTION-TABLE|START-OF-SELECTION|SYSTEM-EXCEPTIONS|TEST-INJECTION|TEST-SEAM|TOP-OF-PAGE|TYPE-POOLS|USER-COMMAND|VALUE-REQUEST)\\b(?![-~/]))"
+          "match": "(?i:(?<![!\\-~>/])\\b(?:AUTHORITY-CHECK|BIT-AND|BIT-OR|BIT-XOR|BREAK-POINT|BYTE-ORDER|CLASS-DATA|CLASS-EVENTS|CLASS-METHODS|CLASS-POOL|CUSTOMER-FUNCTION|END-ENHANCEMENT-SECTION|END-OF-DEFINITION|END-OF-PAGE|END-OF-SELECTION|END-TEST-INJECTION|END-TEST-SEAM|ENHANCEMENT-POINT|ENHANCEMENT-SECTION|EXCEPTION-TABLE|EXIT-COMMAND|FIELD-GROUPS|FIELD-SYMBOLS|FUNCTION-POOL|HELP-REQUEST|INTERFACE-POOL|LINE-COUNT|LINE-SELECTION|LINE-SIZE|LIST-PROCESSING|LOAD-OF-PROGRAM|LOG-POINT|MESSAGE-ID|MOVE-CORRESPONDING|NEW-LINE|NEW-PAGE|NO-DISPLAY|NO-EXTENSION|NO-GAPS|NON-UNIQUE|PARAMETER-TABLE|PF-STATUS|PRINT-CONTROL|READ-ONLY|SAP-SPOOL|SELECT-OPTIONS|SELECTION-SCREEN|SELECTION-SET|SELECTION-SETS|SELECTION-TABLE|START-OF-SELECTION|SYNTAX-CHECK|SYSTEM-EXCEPTIONS|TEST-INJECTION|TEST-SEAM|TOP-OF-PAGE|TYPE-POOL|TYPE-POOLS|USER-COMMAND|VALUE-REQUEST)\\b(?![-~/]))"
         }
       ]
     },
@@ -588,7 +725,7 @@
       "patterns": [
         {
           "name": "keyword.control.abap",
-          "match": "(?i:(?<![!\\-~>/])\\b(?:ABSTRACT|ACCEPTING|ALIASES|ALL|AND|APPENDING|ASSERT|ASSIGN|ASSIGNED|ASSIGNING|AT|AUTHORITY|BEGIN|BETWEEN|BOUND|BY|CASTING|CATCH|CHECK|CLASS|CLEANUP|COMMIT|CONTINUE|DO|ELSE|ELSEIF|END|ENDAT|ENDCLASS|ENDDO|ENDFORM|ENDFUNCTION|ENDIF|ENDINTERFACE|ENDLOOP|ENDMETHOD|ENDMODULE|ENDSELECT|ENDTRY|ENDWHILE|EXCEPT|EXCEPTION|EXCEPTIONS|EXIT|FORM|FUNCTION|IF|IMPLEMENTATION|IN|INITIALIZATION|INTERFACE|LEAVE|LOOP|METHOD|MODULE|NOT|OR|PERFORM|RAISE|RECEIVE|REPORT|RETURN|ROLLBACK|SELECT|STOP|TRY|WAIT|WHEN|WHILE)\\b(?![-~/]))"
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ABSTRACT|ADD|ALIASES|APPEND|ASSERT|ASSIGN|AT|AUTHORITY|BACK|BEGIN|CALL|CASE|CATCH|CHECK|CLASS|CLEAR|CLEANUP|CLOSE|COLLECT|COMMIT|CONCATENATE|CONDENSE|CONTINUE|CONVERT|CREATE|DELETE|DESCRIBE|DIVIDE|DO|ELSE|ELSEIF|END|ENDAT|ENDCASE|ENDCLASS|ENDDO|ENDENHANCEMENT|ENDEXEC|ENDFORM|ENDFUNCTION|ENDIF|ENDINTERFACE|ENDLOOP|ENDMETHOD|ENDMODULE|ENDPROVIDE|ENDSELECT|ENDTRY|ENDWHILE|ENHANCEMENT|EXEC|EXIT|EXPORT|FETCH|FIND|FORM|FORMAT|FREE|FUNCTION|GENERATE|GET|HIDE|IF|IMPORT|INCLUDE|INITIALIZATION|INSERT|INTERFACE|LEAVE|LOOP|MESSAGE|METHOD|MODIFY|MODULE|MULTIPLY|OPEN|OVERLAY|PARAMETERS|PERFORM|POSITION|RAISE|READ|RECEIVE|REJECT|REPLACE|REPORT|RESERVE|RESUME|RETURN|ROLLBACK|SCROLL|SELECT|SET|SHIFT|SKIP|SORT|SPLIT|STOP|SUBMIT|SUBTRACT|SUM|SUPPRESS|TRANSFER|TRANSLATE|TRUNCATE|TRY|ULINE|UNASSIGN|UNPACK|UPDATE|WAIT|WHEN|WHILE|WINDOW|WRITE)\\b(?![-~/]))"
         },
         {
           "name": "storage.type.abap",
@@ -599,8 +736,12 @@
           "match": "(?i:(?<![!\\-~>/])\\b(?:BOOLC|CAST|COND|CONV|CORRESPONDING|EXACT|FILTER|LINE_EXISTS|LINES|NEW|REDUCE|REF|SWITCH|XSDBOOL|VALUE)\\b(?=[ \\t]*[ #(]))"
         },
         {
+          "name": "support.function.aggregate.sql.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:AVG|COUNT|MAX|MIN|SUM)\\b(?=[ \\t]*\\())"
+        },
+        {
           "name": "keyword.other.abap",
-          "match": "(?i:(?<![!\\-~>/])\\b(?:ACCEPTING|ADJACENT|APPEND|AS|ASCENDING|ASYNCHRONOUS|BADI|BACK|BASE|BINARY|BLANKS|BLOCK|BUFFER|BYPASSING|BYTE|CALL|CALLING|CASE|CAST|CHANGING|CHECKBOX|CLIENT|CLOSE|COLLECT|COMMENT|COMPARING|COMPONENTS|CONCATENATE|COND|CONDENSE|CONNECTION|CONSTANTS|CONVERT|CORRESPONDING|CREATE|CRITICAL|CURRENT|CURSOR|DATABASE|DEFAULT|DEEP|DEFERRED|DELETE|DELETING|DESCENDING|DESCRIBE|DESTINATION|DISPLAY|DUPLICATES|DURATION|EMPTY|ENABLED|ENTRIES|ENUM|EVENT|EVENTS|EXPORT|EXPORTING|EXTENSION|FETCH|FIELDS|FILTER|FILTERS|FINAL|FIND|FIRST|FOR|FRAME|FREE|FRIENDS|FROM|GAPS|GET|GROUP|HARMLESS|HAVING|ID|IGNORING|IMPORT|IMPORTING|INHERITING|INIT|INNER|INSERT|INSTANCE|INTERFACES|INTERVALS|INTO|JOIN|KEY|LENGTH|LET|LINE|LINES|LONG|LOWER|MAPPING|MATCH|MATCHCODE|MEDIUM|MEMORY|MESSAGE|MODIF|MODIFY|MOVE|NEXT|NO|NON|OBLIGATORY|OCCURRENCE|OCCURRENCES|OF|ON|OPEN|OPTION|OPTIONAL|ORDER|OTHERS|OUTER|PACKAGE|PARAMETERS|PLACES|POSITION|PRIVATE|PROGRAM|PROTECTED|PUBLIC|PUSHBUTTON|RADIOBUTTON|RAISING|READ|RECEIVING|REDEFINITION|REDUCE|REFRESH|REGEX|REPLACE|RESUMABLE|RETURNING|RISK|ROWS|SCREEN|SECONDS|SECTION|SELECTION|SEPARATED|SET|SHARED|SIGN|SHORT|SINGLE|SIZE|SKIP|SORT|SPECIFIED|SPLIT|STABLE|STARTING|STATIC|STATICS|SUBMATCHES|SUBMIT|SUPPLIED|TASK|TESTING|THEN|TITLE|TIME|STAMP|TO|TRANSFER|TRANSPORTING|TRAILING|ULINE|UNASSIGN|UNIQUE|UNTIL|UP|UPDATE|USING|VALUE|VALUES|VISIBLE|WHERE|WITH|WORK|ZONE)\\b(?![-~/]))"
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ACCEPTING|ADJACENT|ALL|AND|APPENDING|AS|ASCENDING|ASSIGNED|ASSIGNING|ASYNCHRONOUS|BADI|BASE|BETWEEN|BINARY|BLANKS|BLOCK|BOUND|BUFFER|BYPASSING|BY|BYTE|CALLING|CAST|CASTING|CHANGING|CHECKBOX|CLIENT|COMMENT|COMPARING|COMPONENTS|CONNECTION|CONSTANTS|CORRESPONDING|CRITICAL|CURRENT|CURSOR|DATABASE|DEFAULT|DEEP|DEFERRED|DELETING|DESCENDING|DESTINATION|DISPLAY|DISTINCT|DUPLICATES|DURATION|EMPTY|ENABLED|ENTRIES|ENUM|EVENT|EVENTS|EXCEPT|EXCEPTION|EXCEPTIONS|EXPORTING|EXTENSION|FIELDS|FILTER|FILTERS|FINAL|FIRST|FOR|FRAME|FRIENDS|FROM|GAPS|GROUP|HARMLESS|HAVING|ID|IGNORING|IMPLEMENTATION|IMPORTING|IN|INHERITING|INIT|INNER|INSTANCE|INTERFACES|INTERVALS|INTO|JOIN|KEY|LENGTH|LET|LINE|LINES|LONG|LOWER|MAPPING|MATCH|MATCHCODE|MEDIUM|MEMORY|MODIF|MOVE|NEXT|NO|NON|NOT|OBLIGATORY|OCCURRENCE|OCCURRENCES|OF|ON|OPTION|OPTIONAL|OR|ORDER|OTHERS|OUTER|PACKAGE|PLACES|PRIMARY|PRIVATE|PROGRAM|PROTECTED|PUBLIC|PUSHBUTTON|RADIOBUTTON|RAISING|RECEIVING|REDEFINITION|REDUCE|REFRESH|REGEX|RESUMABLE|RETURNING|RISK|ROWS|SCREEN|SECONDS|SECTION|SELECTION|SEPARATED|SHARED|SIGN|SHORT|SINGLE|SIZE|SPECIFIED|STABLE|STARTING|STATIC|STATICS|SUBMATCHES|SUPPLIED|TASK|TESTING|THEN|TITLE|TIME|STAMP|TO|TRANSPORTING|TRAILING|UNION|UNIQUE|UNTIL|UP|USING|VALUE|VALUES|VISIBLE|WHERE|WITH|WORK|ZONE)\\b(?![-~/]))"
         },
         {
           "name": "keyword.operator.word.abap",
@@ -662,6 +803,9 @@
                   "include": "#numbers"
                 },
                 {
+                  "include": "#constants"
+                },
+                {
                   "include": "#identifiers"
                 },
                 {
@@ -701,6 +845,22 @@
         }
       ]
     },
+    "constants": {
+      "patterns": [
+        {
+          "name": "variable.language.system.abap",
+          "match": "(?i:(?<![!\\-~>/])\\bSY-[A-Z0-9_]+\\b)"
+        },
+        {
+          "name": "constant.other.text-symbol.abap",
+          "match": "(?i:(?<![!\\-~>/])\\bTEXT-[A-Z0-9_]+\\b)"
+        },
+        {
+          "name": "constant.language.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ABAP_FALSE|ABAP_TRUE|ABAP_UNDEFINED|SPACE)\\b(?![-~/]))"
+        }
+      ]
+    },
     "identifiers": {
       "patterns": [
         {
@@ -722,6 +882,10 @@
         {
           "name": "keyword.operator.abap",
           "match": "<>|<=|>=|=|<|>|\\+|-|\\*|/"
+        },
+        {
+          "name": "keyword.operator.host-variable.abap",
+          "match": "@"
         },
         {
           "name": "punctuation.terminator.statement.abap",

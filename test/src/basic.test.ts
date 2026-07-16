@@ -77,6 +77,7 @@ suite("ABAP language basics", () => {
     assert.match(declarations, /CLASS-DATA/);
     assert.match(declarations, /INTERFACES/);
     assert.match(declarations, /ALIASES/);
+    assert.match(declarations, /FIELD-SYMBOL/);
 
     const constructor = grammar.repository.constructors.patterns[0];
     for (const operator of [
@@ -102,6 +103,64 @@ suite("ABAP language basics", () => {
     ]) {
       assert.match(keywordPatterns, new RegExp(`\\b${keyword}\\b`));
     }
+  });
+
+  test("covers ABAP 7.50 core statements, SQL clauses, and special tokens", () => {
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+
+    const keywordPatterns = grammar.repository.keywords.patterns
+      .map((pattern: { match: string }) => pattern.match)
+      .join("\n");
+    for (const keyword of [
+      "APPEND", "CLEAR", "CONCATENATE", "CREATE", "DELETE", "DESCRIBE",
+      "ENDCASE", "FIND", "INSERT", "MESSAGE", "MODIFY", "READ",
+      "REPLACE", "SHIFT", "SORT", "TRANSFER", "UPDATE", "WRITE",
+      "DISTINCT", "FIELDS", "GROUP", "HAVING", "JOIN", "PRIMARY",
+      "UNION",
+    ]) {
+      assert.match(keywordPatterns, new RegExp(`\\b${keyword}\\b`));
+    }
+
+    const composite = grammar.repository["composite-keywords"].patterns[0].match;
+    for (const keyword of [
+      "CLASS-POOL", "ENHANCEMENT-POINT", "INTERFACE-POOL",
+      "PRINT-CONTROL", "SYNTAX-CHECK", "TYPE-POOL",
+    ]) {
+      assert.match(composite, new RegExp(keyword));
+    }
+
+    const chains = grammar.repository["chained-declarations"].patterns;
+    assert.ok(chains.some((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.chain.member.abap"));
+    assert.ok(chains.some((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.chain.interface.abap"));
+    assert.ok(chains.some((pattern: { name: string }) =>
+      pattern.name === "meta.declaration.chain.alias.abap"));
+
+    const constants = grammar.repository.constants.patterns;
+    assert.ok(constants.some((pattern: { name: string }) =>
+      pattern.name === "variable.language.system.abap"));
+    assert.ok(constants.some((pattern: { name: string }) =>
+      pattern.name === "constant.other.text-symbol.abap"));
+    assert.ok(constants.some((pattern: { name: string }) =>
+      pattern.name === "constant.language.abap"));
+
+    const aggregate = grammar.repository.keywords.patterns.find(
+      (pattern: { name: string }) =>
+        pattern.name === "support.function.aggregate.sql.abap",
+    );
+    assert.ok(aggregate);
+    for (const functionName of ["AVG", "COUNT", "MAX", "MIN", "SUM"]) {
+      assert.match(aggregate.match, new RegExp(`\\b${functionName}\\b`));
+    }
+
+    assert.ok(grammar.repository.operators.patterns.some(
+      (pattern: { name: string }) =>
+        pattern.name === "keyword.operator.host-variable.abap",
+    ));
   });
 });
 
