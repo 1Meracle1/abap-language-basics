@@ -26,6 +26,9 @@
           "include": "#blocks"
         },
         {
+          "include": "#open-sql"
+        },
+        {
           "include": "#oo-declarations"
         },
         {
@@ -383,10 +386,10 @@
         },
         {
           "name": "meta.block.select.abap",
-          "begin": "(?i:^[ \\t]*(SELECT)\\b(?!-)(?![^.\\r\\n]*\\bSINGLE\\b))",
+          "begin": "(?is:^[ \\t]*(SELECT)\\b(?!-)(?!(?:(?!\\.).)*\\b(?:SINGLE|INTO[ \\t\\r\\n]+TABLE|APPENDING[ \\t\\r\\n]+TABLE)\\b))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.select.abap"
+              "name": "keyword.control.sql.select.abap"
             }
           },
           "end": "(?i:^[ \\t]*(ENDSELECT)\\b\\.?)",
@@ -397,9 +400,286 @@
           },
           "patterns": [
             {
+              "name": "meta.statement.open-sql.select.abap",
+              "begin": "\\G",
+              "end": "\\.",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.terminator.statement.abap"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#open-sql-tokens"
+                }
+              ]
+            },
+            {
               "include": "#code"
             }
           ]
+        }
+      ]
+    },
+    "open-sql": {
+      "patterns": [
+        {
+          "name": "meta.statement.open-sql.select.abap",
+          "begin": "(?i:^[ \\t]*(SELECT)\\b(?!-))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.sql.select.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#open-sql-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.open-sql.insert.abap",
+          "begin": "(?i:^[ \\t]*(INSERT)\\b(?=[ \\t]+(?:(?:INTO[ \\t]+)?[(!?A-Z_/][A-Z0-9_()/]*[ \\t]+(?:VALUES|FROM))))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.sql.insert.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#open-sql-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.open-sql.update.abap",
+          "begin": "(?i:^[ \\t]*(UPDATE)\\b(?!-))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.sql.update.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#open-sql-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.open-sql.modify.abap",
+          "begin": "(?i:^[ \\t]*(MODIFY)\\b(?=[ \\t]+[(!?A-Z_/][A-Z0-9_()/]*[ \\t]+FROM\\b))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.sql.modify.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#open-sql-tokens"
+            }
+          ]
+        },
+        {
+          "name": "meta.statement.open-sql.delete.abap",
+          "begin": "(?i:^[ \\t]*(DELETE)[ \\t]+(FROM)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.sql.delete.abap"
+            },
+            "2": {
+              "name": "keyword.other.sql.abap"
+            },
+            "3": {
+              "name": "entity.name.table.sql.abap"
+            }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#open-sql-tokens"
+            }
+          ]
+        }
+      ]
+    },
+    "open-sql-tokens": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#pragmas"
+        },
+        {
+          "match": "(?i:\\b(SELECT|INSERT|UPDATE|MODIFY|DELETE)\\b(?!-))",
+          "captures": {
+            "1": {
+              "name": "keyword.control.sql.abap"
+            }
+          }
+        },
+        {
+          "name": "support.function.aggregate.sql.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:AVG|COUNT|MAX|MIN|SUM)\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "support.function.scalar.sql.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:ABS|CAST|CEIL|COALESCE|CONCAT|DIV|DIVISION|FLOOR|INSTR|LEFT|LENGTH|LPAD|LTRIM|MOD|REPLACE|RIGHT|ROUND|RPAD|RTRIM|SUBSTRING)\\b(?=[ \\t]*\\())"
+        },
+        {
+          "match": "(?i:\\b(AS)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.sql.abap"
+            },
+            "2": {
+              "name": "entity.name.alias.sql.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(FROM|JOIN|UPDATE|MODIFY)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.sql.abap"
+            },
+            "2": {
+              "name": "entity.name.table.sql.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(INSERT)[ \\t]+(?:(INTO)[ \\t]+)?(!?/?[A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.control.sql.insert.abap"
+            },
+            "2": {
+              "name": "keyword.other.sql.abap"
+            },
+            "3": {
+              "name": "entity.name.table.sql.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(DELETE)[ \\t]+(FROM)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.control.sql.delete.abap"
+            },
+            "2": {
+              "name": "keyword.other.sql.abap"
+            },
+            "3": {
+              "name": "entity.name.table.sql.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(!?[/A-Z_][A-Z0-9_/]*)(~)(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "variable.other.table-alias.sql.abap"
+            },
+            "2": {
+              "name": "punctuation.accessor.sql.abap"
+            },
+            "3": {
+              "name": "variable.other.column.sql.abap"
+            }
+          }
+        },
+        {
+          "match": "(@)(!?[/A-Z_][A-Z0-9_/]*(?:[-~][A-Z0-9_/]+)*)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.host-variable.abap"
+            },
+            "2": {
+              "name": "variable.other.host-variable.sql.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(FROM|FIELDS|WHERE|GROUP[ \\t]+BY|HAVING|ORDER[ \\t]+BY|SET)[ \\t]+(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\)))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.sql.abap"
+            },
+            "2": {
+              "name": "punctuation.section.group.begin.sql.abap"
+            },
+            "3": {
+              "name": "variable.other.dynamic-clause.sql.abap"
+            },
+            "4": {
+              "name": "punctuation.section.group.end.sql.abap"
+            }
+          }
+        },
+        {
+          "name": "constant.language.null.sql.abap",
+          "match": "(?i:(?<![-~>/])\\bNULL\\b(?![-~/]))"
+        },
+        {
+          "name": "keyword.other.sql.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:ACCEPTING|ALL|APPENDING|ASCENDING|BYPASSING|CASE|CLIENT|CONNECTION|CORRESPONDING|DESCENDING|DISTINCT|DUPLICATE|ENTRIES|ESCAPE|EXISTS|FIELDS|FOR|FROM|GROUP|HAVING|INNER|INTO|JOIN|KEYS|LEFT|NULL|ON|ORDER|OUTER|PACKAGE|RIGHT|ROWS|SET|SINGLE|SIZE|SPECIFIED|TABLE|UNION|UPDATE|VALUES|WHERE)\\b(?![-~/]))"
+        },
+        {
+          "name": "keyword.operator.logical.sql.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:AND|BETWEEN|IN|IS|LIKE|NOT|OR)\\b(?![-~/]))"
+        },
+        {
+          "name": "keyword.control.conditional.sql.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:WHEN|THEN|ELSE|END)\\b(?![-~/]))"
+        },
+        {
+          "include": "#declarations"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#identifiers"
+        },
+        {
+          "include": "#operators"
         }
       ]
     },

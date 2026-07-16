@@ -329,6 +329,75 @@ suite("ABAP language basics", () => {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }
   });
+
+  test("scopes Open SQL statements, clauses, functions, and operands contextually", async () => {
+    const document = await openFixture("open-sql.abap");
+    await vscode.window.showTextDocument(document);
+    assert.strictEqual(document.languageId, "abap");
+
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+
+    const codeIncludes = grammar.repository.code.patterns
+      .map((pattern: { include?: string }) => pattern.include);
+    assert.ok(codeIncludes.indexOf("#open-sql") <
+      codeIncludes.indexOf("#keywords"));
+
+    const statements = grammar.repository["open-sql"].patterns;
+    for (const scope of [
+      "meta.statement.open-sql.select.abap",
+      "meta.statement.open-sql.insert.abap",
+      "meta.statement.open-sql.update.abap",
+      "meta.statement.open-sql.modify.abap",
+      "meta.statement.open-sql.delete.abap",
+    ]) {
+      assert.ok(statements.some((pattern: { name: string }) =>
+        pattern.name === scope));
+    }
+
+    const sqlTokens = grammar.repository["open-sql-tokens"].patterns;
+    const tokenText = JSON.stringify(sqlTokens);
+    for (const clause of [
+      "APPENDING", "BYPASSING", "ENTRIES", "FIELDS", "GROUP",
+      "HAVING", "JOIN", "PACKAGE", "UNION", "VALUES",
+    ]) {
+      assert.match(tokenText, new RegExp(`\\b${clause}\\b`));
+    }
+    for (const functionName of [
+      "ABS", "CAST", "COALESCE", "CONCAT", "DIVISION", "INSTR",
+      "LEFT", "LENGTH", "LPAD", "LTRIM", "REPLACE", "RIGHT",
+      "ROUND", "RPAD", "RTRIM", "SUBSTRING",
+    ]) {
+      assert.match(tokenText, new RegExp(`\\b${functionName}\\b`));
+    }
+    for (const scope of [
+      "entity.name.table.sql.abap",
+      "entity.name.alias.sql.abap",
+      "variable.other.column.sql.abap",
+      "variable.other.host-variable.sql.abap",
+      "variable.other.dynamic-clause.sql.abap",
+      "constant.language.null.sql.abap",
+      "keyword.operator.logical.sql.abap",
+      "keyword.control.conditional.sql.abap",
+    ]) {
+      assert.match(tokenText, new RegExp(scope.replaceAll(".", "\\.")));
+    }
+
+    const fixture = fs.readFileSync(
+      path.resolve(__dirname, "../test/fixtures/open-sql.abap"),
+      "utf8",
+    );
+    for (const syntax of [
+      "SELECT SINGLE", "LEFT OUTER JOIN", "FOR ALL ENTRIES IN",
+      "COALESCE(", "CASE WHEN", "UNION DISTINCT", "INSERT INTO",
+      "ACCEPTING DUPLICATE KEYS", "UPDATE (lv_table)",
+      "DELETE FROM", "WHERE (lv_where)",
+    ]) {
+      assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
+    }
+  });
 });
 
 function openFixture(name: string): Thenable<vscode.TextDocument> {
