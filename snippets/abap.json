@@ -19,6 +19,31 @@
     "body": "TYPES ${1:ty_value} TYPE ${2:string}.",
     "description": "Declare a type alias"
   },
+  "TYPES character with length": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_text} TYPE c LENGTH ${2:10}.",
+    "description": "Declare a fixed-length character type"
+  },
+  "TYPES packed number": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_amount} TYPE p LENGTH ${2:8} DECIMALS ${3:2}.",
+    "description": "Declare a packed number type with length and decimals"
+  },
+  "TYPES reference": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_reference} TYPE REF TO ${2:cl_class}.",
+    "description": "Declare a reference type"
+  },
+  "TYPES line of": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_row} TYPE LINE OF ${2:ty_table}.",
+    "description": "Derive a row type from an internal table type"
+  },
+  "TYPES range of": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_range} TYPE RANGE OF ${2:string}.",
+    "description": "Declare a ranges table type"
+  },
   "TYPES structure": {
     "prefix": "TYPES",
     "body": [
@@ -33,15 +58,118 @@
     "body": "TYPES ${1:ty_table} TYPE STANDARD TABLE OF ${2:ty_row} WITH EMPTY KEY.",
     "description": "Declare a standard table type"
   },
+  "TYPES standard table with primary key": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_table} TYPE STANDARD TABLE OF ${2:ty_row} WITH NON-UNIQUE KEY ${3:id}.",
+    "description": "Declare a standard table type with a primary key"
+  },
   "TYPES sorted table": {
     "prefix": "TYPES",
     "body": "TYPES ${1:ty_table} TYPE SORTED TABLE OF ${2:ty_row} WITH UNIQUE KEY ${3:key_field}.",
     "description": "Declare a sorted table type"
   },
+  "TYPES non-unique sorted table": {
+    "prefix": "TYPES",
+    "body": "TYPES ${1:ty_table} TYPE SORTED TABLE OF ${2:ty_row} WITH NON-UNIQUE KEY ${3:key_field}.",
+    "description": "Declare a sorted table type with a non-unique primary key"
+  },
   "TYPES hashed table": {
     "prefix": "TYPES",
     "body": "TYPES ${1:ty_table} TYPE HASHED TABLE OF ${2:ty_row} WITH UNIQUE KEY ${3:key_field}.",
     "description": "Declare a hashed table type"
+  },
+  "TYPES table with sorted secondary key": {
+    "prefix": "TYPES",
+    "body": [
+      "TYPES ${1:ty_table} TYPE STANDARD TABLE OF ${2:ty_row}",
+      "  WITH EMPTY KEY",
+      "  WITH NON-UNIQUE SORTED KEY ${3:by_id} COMPONENTS ${4:id}."
+    ],
+    "description": "Declare a standard table type with a sorted secondary key"
+  },
+  "TYPES table with hashed secondary key": {
+    "prefix": "TYPES",
+    "body": [
+      "TYPES ${1:ty_table} TYPE STANDARD TABLE OF ${2:ty_row}",
+      "  WITH EMPTY KEY",
+      "  WITH UNIQUE HASHED KEY ${3:by_id} COMPONENTS ${4:id}."
+    ],
+    "description": "Declare a standard table type with a hashed secondary key"
+  },
+  "WITH empty key": {
+    "prefix": "WITH",
+    "body": "WITH EMPTY KEY",
+    "description": "Add an empty primary key to a standard table type"
+  },
+  "WITH default key": {
+    "prefix": "WITH",
+    "body": "WITH DEFAULT KEY",
+    "description": "Add the default primary key to a table type"
+  },
+  "WITH non-unique primary key": {
+    "prefix": "WITH",
+    "body": "WITH NON-UNIQUE KEY ${1:key_field}",
+    "description": "Add a non-unique primary table key"
+  },
+  "WITH unique primary key": {
+    "prefix": "WITH",
+    "body": "WITH UNIQUE KEY ${1:key_field}",
+    "description": "Add a unique primary table key"
+  },
+  "WITH non-unique sorted key": {
+    "prefix": "WITH",
+    "body": "WITH NON-UNIQUE SORTED KEY ${1:by_id} COMPONENTS ${2:id}",
+    "description": "Add a non-unique sorted secondary table key"
+  },
+  "WITH unique sorted key": {
+    "prefix": "WITH",
+    "body": "WITH UNIQUE SORTED KEY ${1:by_id} COMPONENTS ${2:id}",
+    "description": "Add a unique sorted secondary table key"
+  },
+  "WITH unique hashed key": {
+    "prefix": "WITH",
+    "body": "WITH UNIQUE HASHED KEY ${1:by_id} COMPONENTS ${2:id}",
+    "description": "Add a unique hashed secondary table key"
+  },
+  "TYPE character with length": {
+    "prefix": "TYPE",
+    "body": "TYPE c LENGTH ${1:10}",
+    "description": "Add a fixed-length character type"
+  },
+  "TYPE packed number": {
+    "prefix": "TYPE",
+    "body": "TYPE p LENGTH ${1:8} DECIMALS ${2:2}",
+    "description": "Add a packed number type with length and decimals"
+  },
+  "TYPE reference": {
+    "prefix": "TYPE",
+    "body": "TYPE REF TO ${1:cl_class}",
+    "description": "Add a reference type"
+  },
+  "TYPE line of": {
+    "prefix": "TYPE",
+    "body": "TYPE LINE OF ${1:ty_table}",
+    "description": "Add a row type derived from an internal table"
+  },
+  "TYPE range of": {
+    "prefix": "TYPE",
+    "body": "TYPE RANGE OF ${1:string}",
+    "description": "Add a ranges table type"
+  },
+  "TYPE standard table of": {
+    "prefix": "TYPE",
+    "body": "TYPE STANDARD TABLE OF ${1:ty_row} WITH EMPTY KEY",
+    "description": "Add a standard internal table type"
+  },
+  "TYPE sorted table of": {
+    "prefix": "TYPE",
+    "body": "TYPE SORTED TABLE OF ${1:ty_row} WITH ${2:UNIQUE} KEY ${3:key_field}",
+    "description": "Add a sorted internal table type"
+  },
+  "TYPE hashed table of": {
+    "prefix": "TYPE",
+    "body": "TYPE HASHED TABLE OF ${1:ty_row} WITH UNIQUE KEY ${2:key_field}",
+    "description": "Add a hashed internal table type"
   },
   "Reference declaration": {
     "prefix": "DATA",
@@ -75,7 +203,95 @@
     "body": "${1:lo_object} = NEW ${2:cl_class}( ${3:} ).",
     "description": "Create an object reference"
   },
-  "Local CLASS": {
+  "CONV constructor": {
+    "prefix": "CONV",
+    "body": "${1:result} = CONV ${2:string}( ${3:source} ).",
+    "description": "Convert a value to a specified type"
+  },
+  "EXACT constructor": {
+    "prefix": "EXACT",
+    "body": "${1:result} = EXACT ${2:type}( ${3:source} ).",
+    "description": "Convert a value without information loss"
+  },
+  "CAST constructor": {
+    "prefix": "CAST",
+    "body": "${1:lo_object} = CAST ${2:cl_class}( ${3:lo_source} ).",
+    "description": "Cast an object reference"
+  },
+  "REF constructor": {
+    "prefix": "REF",
+    "body": "${1:reference} = REF #( ${2:data_object} ).",
+    "description": "Create a data reference"
+  },
+  "CORRESPONDING constructor": {
+    "prefix": "CORRESPONDING",
+    "body": [
+      "${1:result} = CORRESPONDING ${2:ty_target}(",
+      "  ${3:source}",
+      "  MAPPING ${4:target_field} = ${5:source_field}",
+      ")."
+    ],
+    "description": "Construct a value from identically named or mapped components"
+  },
+  "COND constructor": {
+    "prefix": "COND",
+    "body": [
+      "${1:result} = COND ${2:string}(",
+      "  WHEN ${3:condition} THEN ${4:value}",
+      "  ELSE ${5:fallback}",
+      ")."
+    ],
+    "description": "Choose a value using conditional branches"
+  },
+  "SWITCH constructor": {
+    "prefix": "SWITCH",
+    "body": [
+      "${1:result} = SWITCH ${2:string}(",
+      "  ${3:operand}",
+      "  WHEN ${4:constant} THEN ${5:value}",
+      "  ELSE ${6:fallback}",
+      ")."
+    ],
+    "description": "Choose a value by comparing an operand"
+  },
+  "REDUCE constructor": {
+    "prefix": "REDUCE",
+    "body": [
+      "${1:result} = REDUCE ${2:i}(",
+      "  INIT ${3:sum} = ${4:0}",
+      "  FOR ${5:row} IN ${6:lt_rows}",
+      "  NEXT ${3:sum} = ${3:sum} + ${5:row}-${7:value}",
+      ")."
+    ],
+    "description": "Reduce internal table rows to one value"
+  },
+  "FILTER constructor": {
+    "prefix": "FILTER",
+    "body": [
+      "${1:result} = FILTER ${2:ty_table}(",
+      "  ${3:lt_rows} USING KEY ${4:by_id}",
+      "  WHERE ${5:id} = ${6:value}",
+      ")."
+    ],
+    "description": "Filter an internal table using a sorted or hashed key"
+  },
+  "Local CLASS definition and implementation": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:lcl_class} DEFINITION.",
+      "  PUBLIC SECTION.",
+      "    METHODS ${2:execute}.",
+      "ENDCLASS.",
+      "",
+      "CLASS ${1:lcl_class} IMPLEMENTATION.",
+      "  METHOD ${2:execute}.",
+      "    ${3:}",
+      "  ENDMETHOD.",
+      "ENDCLASS."
+    ],
+    "description": "Define and implement a local class"
+  },
+  "Local final CLASS definition and implementation": {
     "prefix": "CLASS",
     "body": [
       "CLASS ${1:lcl_class} DEFINITION FINAL.",
@@ -89,7 +305,94 @@
       "  ENDMETHOD.",
       "ENDCLASS."
     ],
-    "description": "Define and implement a local class"
+    "description": "Define and implement a final local class"
+  },
+  "Local inherited CLASS definition and implementation": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:lcl_class} DEFINITION INHERITING FROM ${2:lcl_parent}.",
+      "  PUBLIC SECTION.",
+      "    METHODS ${3:execute}.",
+      "ENDCLASS.",
+      "",
+      "CLASS ${1:lcl_class} IMPLEMENTATION.",
+      "  METHOD ${3:execute}.",
+      "    ${4:}",
+      "  ENDMETHOD.",
+      "ENDCLASS."
+    ],
+    "description": "Define and implement a local subclass"
+  },
+  "Global CLASS definition and implementation": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:zcl_class} DEFINITION PUBLIC CREATE PUBLIC.",
+      "  PUBLIC SECTION.",
+      "    METHODS ${2:execute}.",
+      "ENDCLASS.",
+      "",
+      "CLASS ${1:zcl_class} IMPLEMENTATION.",
+      "  METHOD ${2:execute}.",
+      "    ${3:}",
+      "  ENDMETHOD.",
+      "ENDCLASS."
+    ],
+    "description": "Define and implement a public global class"
+  },
+  "Global final CLASS definition and implementation": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:zcl_class} DEFINITION PUBLIC FINAL CREATE PUBLIC.",
+      "  PUBLIC SECTION.",
+      "    METHODS ${2:execute}.",
+      "ENDCLASS.",
+      "",
+      "CLASS ${1:zcl_class} IMPLEMENTATION.",
+      "  METHOD ${2:execute}.",
+      "    ${3:}",
+      "  ENDMETHOD.",
+      "ENDCLASS."
+    ],
+    "description": "Define and implement a final public global class"
+  },
+  "Global inherited CLASS definition and implementation": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:zcl_class} DEFINITION PUBLIC INHERITING FROM ${2:cl_parent} CREATE PUBLIC.",
+      "  PUBLIC SECTION.",
+      "    METHODS ${3:execute}.",
+      "ENDCLASS.",
+      "",
+      "CLASS ${1:zcl_class} IMPLEMENTATION.",
+      "  METHOD ${3:execute}.",
+      "    ${4:}",
+      "  ENDMETHOD.",
+      "ENDCLASS."
+    ],
+    "description": "Define and implement a public global subclass"
+  },
+  "Local test CLASS definition and implementation": {
+    "prefix": "CLASS",
+    "body": [
+      "CLASS ${1:ltcl_test} DEFINITION FINAL FOR TESTING",
+      "  DURATION SHORT",
+      "  RISK LEVEL HARMLESS.",
+      "  PRIVATE SECTION.",
+      "    METHODS ${2:test_execute} FOR TESTING.",
+      "ENDCLASS.",
+      "",
+      "CLASS ${1:ltcl_test} IMPLEMENTATION.",
+      "  METHOD ${2:test_execute}.",
+      "    ${3:}",
+      "  ENDMETHOD.",
+      "ENDCLASS."
+    ],
+    "description": "Define and implement a local ABAP Unit test class"
+  },
+  "Deferred CLASS definition": {
+    "prefix": "CLASS",
+    "body": "CLASS ${1:lcl_class} DEFINITION DEFERRED.",
+    "description": "Forward-declare a local class"
   },
   "CLASS definition": {
     "prefix": "CLASS",
@@ -119,6 +422,25 @@
     ],
     "description": "Define a local interface"
   },
+  "INTERFACES implementation obligation": {
+    "prefix": "INTERFACES",
+    "body": "INTERFACES ${1:zif_interface}.",
+    "description": "Declare an implemented interface in a class definition"
+  },
+  "INTERFACE method implementation": {
+    "prefix": "METHOD",
+    "body": [
+      "METHOD ${1:zif_interface}~${2:execute}.",
+      "  ${3:}",
+      "ENDMETHOD."
+    ],
+    "description": "Implement an interface method"
+  },
+  "ALIASES interface method": {
+    "prefix": "ALIASES",
+    "body": "ALIASES ${1:execute} FOR ${2:zif_interface}~${3:execute}.",
+    "description": "Declare an alias for an interface method"
+  },
   "METHODS declaration": {
     "prefix": "METHODS",
     "body": [
@@ -127,6 +449,130 @@
       "  RETURNING VALUE(${4:rv_result}) TYPE ${5:string}."
     ],
     "description": "Declare an instance method"
+  },
+  "METHODS importing": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}."
+    ],
+    "description": "Declare a method with one importing parameter"
+  },
+  "METHODS exporting": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  EXPORTING ${2:ev_value} TYPE ${3:string}."
+    ],
+    "description": "Declare a method with one exporting parameter"
+  },
+  "METHODS changing": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  CHANGING ${2:cv_value} TYPE ${3:string}."
+    ],
+    "description": "Declare a method with one changing parameter"
+  },
+  "METHODS returning": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  RETURNING VALUE(${2:rv_result}) TYPE ${3:string}."
+    ],
+    "description": "Declare a functional method with one returning parameter"
+  },
+  "METHODS importing and exporting": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}",
+      "  EXPORTING ${4:ev_result} TYPE ${5:string}."
+    ],
+    "description": "Declare a method with importing and exporting parameters"
+  },
+  "METHODS importing and changing": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}",
+      "  CHANGING ${4:cv_result} TYPE ${5:string}."
+    ],
+    "description": "Declare a method with importing and changing parameters"
+  },
+  "METHODS importing and returning": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}",
+      "  RETURNING VALUE(${4:rv_result}) TYPE ${5:string}."
+    ],
+    "description": "Declare a functional method with importing and returning parameters"
+  },
+  "METHODS importing exporting and changing": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}",
+      "  EXPORTING ${4:ev_result} TYPE ${5:string}",
+      "  CHANGING ${6:cv_state} TYPE ${7:string}."
+    ],
+    "description": "Declare a method with importing, exporting, and changing parameters"
+  },
+  "METHODS raising": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  RAISING ${2:cx_error} ${3:cx_other_error}."
+    ],
+    "description": "Declare a method with class-based exceptions"
+  },
+  "METHODS importing returning and raising": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}",
+      "  RETURNING VALUE(${4:rv_result}) TYPE ${5:string}",
+      "  RAISING ${6:cx_error} ${7:cx_other_error}."
+    ],
+    "description": "Declare a functional method with input and class-based exceptions"
+  },
+  "METHODS importing exporting changing and raising": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:execute}",
+      "  IMPORTING ${2:iv_value} TYPE ${3:string}",
+      "  EXPORTING ${4:ev_result} TYPE ${5:string}",
+      "  CHANGING ${6:cv_state} TYPE ${7:string}",
+      "  RAISING ${8:cx_error} ${9:cx_other_error}."
+    ],
+    "description": "Declare a method with all non-returning parameter sections and exceptions"
+  },
+  "RAISING method addition": {
+    "prefix": "RAISING",
+    "body": "RAISING ${1:cx_error} ${2:cx_other_error}",
+    "description": "Add class-based exceptions to a method declaration"
+  },
+  "METHODS redefinition": {
+    "prefix": "METHODS",
+    "body": "METHODS ${1:execute} REDEFINITION.",
+    "description": "Redefine an inherited instance method"
+  },
+  "EVENTS declaration": {
+    "prefix": "EVENTS",
+    "body": [
+      "EVENTS ${1:changed}",
+      "  EXPORTING VALUE(${2:ev_value}) TYPE ${3:string}."
+    ],
+    "description": "Declare an instance event with one parameter"
+  },
+  "METHODS event handler": {
+    "prefix": "METHODS",
+    "body": [
+      "METHODS ${1:on_changed} FOR EVENT ${2:changed} OF ${3:cl_source}",
+      "  IMPORTING ${4:ev_value}."
+    ],
+    "description": "Declare an instance event handler"
   },
   "CLASS-METHODS declaration": {
     "prefix": "CLASS-METHODS",
@@ -422,6 +868,15 @@
       "    ${2:parameter} = ${3:value}."
     ],
     "description": "Raise a class-based exception"
+  },
+  "RAISE EVENT": {
+    "prefix": "RAISE EVENT",
+    "body": [
+      "RAISE EVENT ${1:changed}",
+      "  EXPORTING",
+      "    ${2:ev_value} = ${3:value}."
+    ],
+    "description": "Raise an instance event"
   },
   "MESSAGE": {
     "prefix": "MESSAGE",

@@ -778,6 +778,16 @@ suite("ABAP language basics", () => {
     assert.ok(loop.patterns.some((pattern: { name?: string }) =>
       pattern.name === "meta.statement.internal-table.loop.abap"));
 
+    const tokens = await vscode.commands.executeCommand<Array<{
+      c: string;
+      t: string;
+    }>>("_workbench.captureSyntaxTokens", document.uri);
+    for (const type of ["i", "string"]) {
+      const token = tokens.find(candidate => candidate.c === type);
+      assert.ok(token, `VS Code did not emit a ${type} syntax token`);
+      assert.match(token.t, /\bsupport\.type\.builtin\.abap\b/);
+    }
+
     const number = grammar.repository.numbers.patterns[0];
     assert.strictEqual(number.name, "constant.numeric.abap");
     assert.doesNotMatch(number.match, /\\\\\./);
