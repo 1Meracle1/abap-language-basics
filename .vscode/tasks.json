@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "compile extension tests",
+      "type": "npm",
+      "script": "compile",
+      "problemMatcher": "$tsc",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "test extension",
+      "type": "npm",
+      "script": "test",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "verify extension package",
+      "type": "npm",
+      "script": "verify:package",
+      "problemMatcher": [],
+      "group": "test"
+    }
+  ]
+}

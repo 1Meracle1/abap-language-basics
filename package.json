@@ -2,7 +2,7 @@
   "name": "abap-language-basics",
   "displayName": "ABAP Language Basics",
   "description": "Lightweight ABAP syntax highlighting, snippets, folding, and editor configuration.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "1meracle1",
   "license": "MIT",
   "author": "ABAP LSP contributors",

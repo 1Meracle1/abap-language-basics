@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run ABAP Language Basics",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensions-dir=${workspaceFolder}/.vscode-test/extensions",
+        "--user-data-dir=${workspaceFolder}/.vscode-test/dev-user-data",
+        "--new-window",
+        "${workspaceFolder}/test/fixtures",
+        "--goto",
+        "${workspaceFolder}/test/fixtures/highlighting.abap:1:1"
+      ]
+    },
+    {
+      "name": "Run Extension Tests",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/index.js",
+        "--extensions-dir=${workspaceFolder}/.vscode-test/extensions",
+        "--user-data-dir=${workspaceFolder}/.vscode-test/test-user-data",
+        "--new-window",
+        "${workspaceFolder}/test/fixtures"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/out/**/*.js"
+      ],
+      "preLaunchTask": "compile extension tests"
+    }
+  ]
+}
