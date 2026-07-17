@@ -9,9 +9,44 @@ suite("ABAP language basics", () => {
   test("owns the ABAP language and loads in the extension host", async () => {
     const extension = vscode.extensions.getExtension(basicExtensionId);
     assert.ok(extension, `${basicExtensionId} is not available in the test host`);
+    assert.strictEqual(
+      path.resolve(extension.extensionPath),
+      path.resolve(__dirname, ".."),
+      "the test host loaded ABAP Language Basics from a different checkout",
+    );
 
     const document = await openFixture("highlighting.abap");
     assert.strictEqual(document.languageId, "abap");
+  });
+
+  test("uses TextMate-compatible regular-expression options", () => {
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+
+    assert.doesNotMatch(
+      JSON.stringify(grammar),
+      /\(\?[imx-]*s[imx-]*:/,
+      "VS Code's Oniguruma does not support the inline s option",
+    );
+  });
+
+  test("tokenizes INCLUDE in the running development extension", async () => {
+    const document = await openFixture("highlighting.abap");
+    const tokens = await vscode.commands.executeCommand<Array<{
+      c: string;
+      t: string;
+      r: Record<string, string | undefined>;
+    }>>("_workbench.captureSyntaxTokens", document.uri);
+    const includeToken = tokens.find(token => token.c === "INCLUDE");
+
+    assert.ok(includeToken, "VS Code did not emit an INCLUDE syntax token");
+    assert.match(includeToken.t, /\bkeyword\.control\.include\.abap\b/);
+    assert.ok(
+      includeToken.r.dark_plus,
+      `Dark+ did not assign INCLUDE a foreground: ${JSON.stringify(includeToken)}`,
+    );
   });
 
   test("provides keyword-prefixed snippets", async () => {
@@ -88,7 +123,7 @@ suite("ABAP language basics", () => {
     }
     assert.strictEqual(
       constructor.captures[1].name,
-      "keyword.operator.constructor.abap",
+      "keyword.operator.expression.constructor.abap",
     );
     assert.strictEqual(constructor.captures[2].name, "storage.type.inferred.abap");
     assert.strictEqual(constructor.captures[3].name, "entity.name.type.abap");
@@ -102,6 +137,162 @@ suite("ABAP language basics", () => {
       "PUSHBUTTON", "RADIOBUTTON", "TITLE", "ULINE",
     ]) {
       assert.match(keywordPatterns, new RegExp(`\\b${keyword}\\b`));
+    }
+  });
+
+  test("matches highlighted fixture constructs with their owning scopes", () => {
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+
+    const classBlock = grammar.repository.blocks.patterns.find(
+      (pattern: { name: string }) => pattern.name === "meta.class.abap",
+    );
+    const moduleBlock = grammar.repository.blocks.patterns.find(
+      (pattern: { name: string }) =>
+        pattern.name === "meta.function.module.abap",
+    );
+    assert.ok(classBlock);
+    assert.ok(moduleBlock);
+    assert.strictEqual(
+      classBlock.beginCaptures[3].name,
+      "storage.modifier.class.abap",
+    );
+    assert.strictEqual(
+      moduleBlock.beginCaptures[3].name,
+      "storage.modifier.module.abap",
+    );
+    for (const [line, modifier] of [
+      ["CLASS lcl_example DEFINITION.", "DEFINITION"],
+      ["CLASS lcl_example IMPLEMENTATION.", "IMPLEMENTATION"],
+    ]) {
+      assert.strictEqual(
+        textMateRegex(classBlock.begin).exec(line)?.[3],
+        modifier,
+      );
+    }
+    assert.strictEqual(
+      textMateRegex(moduleBlock.begin).exec("MODULE status_0100 OUTPUT.")?.[3],
+      "OUTPUT",
+    );
+
+    const declarations = grammar.repository.declarations.patterns;
+    const inlineData = declarations.find((pattern: { match: string }) =>
+      pattern.match.includes("DATA|FINAL"));
+    const memberDeclaration = declarations.find((pattern: { match: string }) =>
+      pattern.match.includes("CLASS-EVENTS|EVENTS"));
+    assert.ok(inlineData);
+    assert.ok(memberDeclaration);
+    assert.ok(textMateRegex(inlineData.match).test("@DATA(lt_rows)"));
+    assert.ok(textMateRegex(memberDeclaration.match).test(
+      "CLASS-EVENTS shutdown",
+    ));
+
+    const declarationTypes = grammar.repository["declaration-types"].patterns;
+    const includeType = declarationTypes.find((pattern: { match: string }) =>
+      textMateRegex(pattern.match).test("INCLUDE TYPE ty_report_state"));
+    const typeReference = declarationTypes.find((pattern: { match: string }) =>
+      textMateRegex(pattern.match).test("TYPE REF TO ty_report_state"));
+    assert.ok(includeType);
+    assert.ok(typeReference);
+    assert.strictEqual(
+      textMateRegex(includeType.match).exec("INCLUDE TYPE ty_report_state")?.[1],
+      "INCLUDE",
+    );
+    assert.strictEqual(
+      includeType.captures[1].name,
+      "keyword.control.include.abap",
+    );
+    assert.strictEqual(
+      textMateRegex(typeReference.match).exec("TYPE REF TO ty_report_state")
+        ?.[2].trim(),
+      "REF TO",
+    );
+    assert.strictEqual(typeReference.captures[2].name, "storage.type.abap");
+    assert.doesNotMatch(
+      "TYPE REF TO data",
+      textMateRegex(typeReference.match),
+      "REF must fall through to the storage-type keyword scope",
+    );
+
+    const constructor = textMateRegex(
+      grammar.repository.constructors.patterns[0].match,
+    );
+    for (const syntax of [
+      "VALUE ty_numbers(",
+      "FILTER #(",
+      "CORRESPONDING ty_target(",
+      "REDUCE i(",
+      "REF #(",
+    ]) {
+      assert.ok(constructor.test(syntax), `constructor did not match ${syntax}`);
+    }
+
+    const otherKeyword = grammar.repository.keywords.patterns.find(
+      (pattern: { name: string }) => pattern.name === "keyword.other.abap",
+    );
+    const supportFunction = grammar.repository.keywords.patterns.find(
+      (pattern: { name: string }) => pattern.name === "support.function.abap",
+    );
+    const compositeKeyword = grammar.repository["composite-keywords"].patterns[0];
+    assert.ok(otherKeyword);
+    assert.ok(supportFunction);
+    assert.doesNotMatch(
+      "DATA lv_text TYPE string VALUE 'text'.",
+      textMateRegex(supportFunction.match),
+    );
+    assert.doesNotMatch(
+      "CONSTANTS lc_number TYPE i VALUE 42.",
+      textMateRegex(supportFunction.match),
+    );
+    assert.match("VALUE #(", textMateRegex(supportFunction.match));
+    assert.match("VALUE", textMateRegex(otherKeyword.match));
+    for (const keyword of [
+      "DEFINITION", "FIELD", "IMPLEMENTATION", "INPUT", "INSTANCES",
+      "IS", "OUTPUT", "SCREEN", "TIMES",
+    ]) {
+      assert.ok(
+        textMateRegex(otherKeyword.match).test(keyword),
+        `keyword pattern did not match ${keyword}`,
+      );
+    }
+    assert.ok(textMateRegex(compositeKeyword.match).test(
+      "AT SELECTION-SCREEN OUTPUT.",
+    ));
+    assert.doesNotMatch("ls_row-field", textMateRegex(otherKeyword.match));
+
+    const fixture = fs.readFileSync(
+      path.resolve(__dirname, "../test/fixtures/highlighting.abap"),
+      "utf8",
+    );
+    for (const syntax of [
+      "AT SELECTION-SCREEN OUTPUT.",
+      "SELECTION-SCREEN COMMENT 1(20) text-c01 FOR FIELD p_check.",
+      "LOOP AT SCREEN.",
+      "MODULE status_0100 OUTPUT.",
+      "CLASS lcl_example DEFINITION.",
+      "CLASS lcl_example IMPLEMENTATION.",
+      "SET HANDLER me->on_finished FOR ALL INSTANCES.",
+      "SORT lt_copy DESCENDING.",
+      "DO 2 TIMES.",
+      "SELECT carrid FROM scarr INTO @DATA(lv_carrid).",
+      "GROUP BY carrier~carrid",
+      "ORDER BY carrier~carrid ASCENDING",
+      "INTO TABLE @DATA(lt_connection_counts).",
+      "DATA(lt_numbers) = VALUE ty_numbers( ( 1 ) ( 2 ) ).",
+      "DATA(lt_filtered) = FILTER #( lt_more WHERE table_line > 1 ).",
+      "DATA(ls_target) = CORRESPONDING ty_target(",
+      "DATA(lv_total) = REDUCE i(",
+      "DATA(lv_text) = CONV string( lv_total ).",
+      "DATA(lv_exact) = EXACT i( lv_text ).",
+      "DATA(lv_result) = COND string(",
+      "WHEN normalized IS INITIAL THEN `empty`",
+      "rv_output = SWITCH string(",
+      "DATA(lr_output) = REF #( rv_output ).",
+      "DATA(lo_type) = CAST cl_abap_elemdescr(",
+    ]) {
+      assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }
   });
 
@@ -169,7 +360,7 @@ suite("ABAP language basics", () => {
 
     assert.ok(grammar.repository.operators.patterns.some(
       (pattern: { name: string }) =>
-        pattern.name === "keyword.operator.host-variable.abap",
+        pattern.name === "punctuation.definition.variable.host.abap",
     ));
   });
 
@@ -367,8 +558,8 @@ suite("ABAP language basics", () => {
     const sqlTokens = grammar.repository["open-sql-tokens"].patterns;
     const tokenText = JSON.stringify(sqlTokens);
     for (const clause of [
-      "APPENDING", "BYPASSING", "ENTRIES", "FIELDS", "GROUP",
-      "HAVING", "JOIN", "PACKAGE", "UNION", "VALUES",
+      "APPENDING", "BUFFER", "BY", "BYPASSING", "ENTRIES", "FIELDS", "GROUP",
+      "HAVING", "JOIN", "OF", "PACKAGE", "TABLE", "UNION", "VALUES",
     ]) {
       assert.match(tokenText, new RegExp(`\\b${clause}\\b`));
     }
@@ -386,10 +577,75 @@ suite("ABAP language basics", () => {
       "variable.other.host-variable.sql.abap",
       "variable.other.dynamic-clause.sql.abap",
       "constant.language.null.sql.abap",
-      "keyword.operator.logical.sql.abap",
+      "keyword.other.logical.sql.abap",
       "keyword.control.conditional.sql.abap",
     ]) {
       assert.match(tokenText, new RegExp(scope.replaceAll(".", "\\.")));
+    }
+
+    const hostVariable = sqlTokens.find((pattern: {
+      captures?: Record<string, { name: string }>;
+    }) => pattern.captures?.["2"]?.name ===
+      "variable.other.host-variable.sql.abap");
+    assert.ok(hostVariable);
+    assert.strictEqual(
+      hostVariable.captures["1"].name,
+      "punctuation.definition.variable.host.abap",
+    );
+    assert.match("@space", textMateRegex(hostVariable.match));
+    assert.doesNotMatch("@DATA(lv_carrid)", textMateRegex(hostVariable.match));
+
+    const inlineData = grammar.repository.declarations.patterns.find(
+      (pattern: { match?: string }) => pattern.match?.includes("DATA|FINAL"),
+    );
+    const sqlKeyword = sqlTokens.find((pattern: { name?: string }) =>
+      pattern.name === "keyword.other.sql.abap");
+    assert.ok(inlineData);
+    assert.ok(sqlKeyword);
+    assert.match("DATA(lv_carrid)", textMateRegex(inlineData.match));
+    assert.match("BUFFER", textMateRegex(sqlKeyword.match));
+    assert.match("BY", textMateRegex(sqlKeyword.match));
+    assert.match("OF", textMateRegex(sqlKeyword.match));
+    assert.match("TABLE", textMateRegex(sqlKeyword.match));
+
+    const tableSource = sqlTokens.find((pattern: { match?: string }) =>
+      pattern.match?.includes("FROM|JOIN|UPDATE|MODIFY"));
+    assert.ok(tableSource);
+    assert.doesNotMatch("FROM TABLE", textMateRegex(tableSource.match));
+    assert.match("FROM scarr", textMateRegex(tableSource.match));
+
+    const tokens = await vscode.commands.executeCommand<Array<{
+      c: string;
+      t: string;
+      r: Record<string, string | undefined>;
+    }>>("_workbench.captureSyntaxTokens", document.uri);
+    for (const keyword of ["AND", "IN", "LIKE"]) {
+      const token = tokens.find(candidate => candidate.c === keyword);
+      assert.ok(token, `VS Code did not emit an ${keyword} syntax token`);
+      assert.match(token.t, /\bkeyword\.other\.logical\.sql\.abap\b/);
+      assert.ok(
+        token.r.dark_plus,
+        `Dark+ did not assign ${keyword} a foreground: ${JSON.stringify(token)}`,
+      );
+    }
+    for (const keyword of ["UP", "TO"]) {
+      const token = tokens.find(candidate => candidate.c === keyword);
+      assert.ok(token, `VS Code did not emit an ${keyword} syntax token`);
+      assert.match(token.t, /\bkeyword\.other\.sql\.abap\b/);
+      assert.ok(
+        token.r.dark_plus,
+        `Dark+ did not assign ${keyword} a foreground: ${JSON.stringify(token)}`,
+      );
+    }
+    for (const keyword of ["OF", "TABLE"]) {
+      const token = tokens.find(candidate =>
+        candidate.c === keyword &&
+        /\bkeyword\.other\.sql\.abap\b/.test(candidate.t));
+      assert.ok(token, `VS Code did not emit an SQL ${keyword} syntax token`);
+      assert.ok(
+        token.r.dark_plus,
+        `Dark+ did not assign ${keyword} a foreground: ${JSON.stringify(token)}`,
+      );
     }
 
     const fixture = fs.readFileSync(
@@ -401,6 +657,7 @@ suite("ABAP language basics", () => {
       "COALESCE(", "CASE WHEN", "UNION DISTINCT", "INSERT INTO",
       "ACCEPTING DUPLICATE KEYS", "UPDATE (lv_table)",
       "MODIFY (lv_table)", "DELETE FROM (lv_table)", "WHERE (lv_where)",
+      "BYPASSING BUFFER", "UP TO 100 ROWS",
     ]) {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
     }
@@ -497,10 +754,14 @@ suite("ABAP language basics", () => {
     const tokenText = JSON.stringify(
       grammar.repository["internal-table-tokens"].patterns,
     );
+    assert.ok(grammar.repository["internal-table-tokens"].patterns.some(
+      (pattern: { include?: string }) => pattern.include === "#constructors",
+    ));
     for (const syntax of [
       "TRANSPORTING", "NO", "FIELDS", "BINARY", "SEARCH", "REFERENCE",
       "LINES", "OF", "INITIAL", "LINE", "ADJACENT", "DUPLICATES",
-      "COMPARING", "COMPONENTS", "INDEX", "USING",
+      "ASCENDING", "COMPARING", "COMPONENTS", "DESCENDING", "INDEX",
+      "USING", "WITH",
     ]) {
       assert.match(tokenText, new RegExp(`\\b${syntax}\\b`));
     }
@@ -522,9 +783,10 @@ suite("ABAP language basics", () => {
     );
     for (const syntax of [
       "TRANSPORTING NO FIELDS", "BINARY SEARCH", "REFERENCE INTO",
-      "APPEND INITIAL LINE", "INSERT LINES OF", "USING KEY",
+      "WITH TABLE KEY", "WITH KEY", "APPEND INITIAL LINE",
+      "INSERT LINES OF", "INSERT VALUE ty_row(", "USING KEY",
       "ADJACENT DUPLICATES FROM", "COMPARING id text", "DESCRIBE TABLE",
-      "SORT lt_rows",
+      "SORT lt_rows", "COLLECT VALUE ty_row(",
       "'Don''t'", "`Use `` inside`", "9999999999999999999999999999999",
     ]) {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
@@ -620,11 +882,30 @@ suite("ABAP language basics", () => {
     for (const addition of [
       "OCCURRENCES", "REGEX", "IGNORING", "MATCH", "REPLACEMENT",
       "RESULTS", "SECTION", "OFFSET", "SUBMATCHES", "SEPARATED",
-      "RESPECTING", "CIRCULAR", "DELETING", "LEADING", "NO-GAPS",
+      "RESPECTING", "BLANKS", "RIGHT", "CIRCULAR", "LEFT", "DELETING",
+      "LEADING", "NO-GAPS",
     ]) {
       assert.match(tokenText, new RegExp(`\\b${addition}\\b`));
     }
     assert.match(tokenText, /keyword\.other\.string-processing\.abap/);
+
+    const tokens = await vscode.commands.executeCommand<Array<{
+      c: string;
+      t: string;
+      r: Record<string, string | undefined>;
+    }>>("_workbench.captureSyntaxTokens", document.uri);
+    for (const keyword of ["BLANKS", "RIGHT", "LEFT"]) {
+      const token = tokens.find(candidate => candidate.c === keyword);
+      assert.ok(token, `VS Code did not emit a ${keyword} syntax token`);
+      assert.match(
+        token.t,
+        /\bkeyword\.other\.string-processing\.abap\b/,
+      );
+      assert.ok(
+        token.r.dark_plus,
+        `Dark+ did not assign ${keyword} a foreground: ${JSON.stringify(token)}`,
+      );
+    }
 
     const fixture = fs.readFileSync(
       path.resolve(__dirname, "../test/fixtures/string-processing.abap"),
@@ -655,4 +936,8 @@ function lineOf(document: vscode.TextDocument, prefix: string): number {
     }
   }
   assert.fail(`fixture line not found: ${prefix}`);
+}
+
+function textMateRegex(source: string): RegExp {
+  return new RegExp(source.replaceAll("(?i:", "(?:"), "i");
 }
