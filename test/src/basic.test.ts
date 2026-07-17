@@ -30,6 +30,11 @@ suite("ABAP language basics", () => {
       /\(\?[imx-]*s[imx-]*:/,
       "VS Code's Oniguruma does not support the inline s option",
     );
+    assert.doesNotMatch(
+      JSON.stringify(grammar),
+      /"keyword\.control(?:\.|\")/,
+      "ABAP keywords must not inherit themes' contrasting control-flow color",
+    );
   });
 
   test("tokenizes INCLUDE in the running development extension", async () => {
@@ -42,7 +47,7 @@ suite("ABAP language basics", () => {
     const includeToken = tokens.find(token => token.c === "INCLUDE");
 
     assert.ok(includeToken, "VS Code did not emit an INCLUDE syntax token");
-    assert.match(includeToken.t, /\bkeyword\.control\.include\.abap\b/);
+    assert.match(includeToken.t, /\bkeyword\.other\.control\.include\.abap\b/);
     assert.ok(
       includeToken.r.dark_plus,
       `Dark+ did not assign INCLUDE a foreground: ${JSON.stringify(includeToken)}`,
@@ -202,7 +207,7 @@ suite("ABAP language basics", () => {
     );
     assert.strictEqual(
       includeType.captures[1].name,
-      "keyword.control.include.abap",
+      "keyword.other.control.include.abap",
     );
     assert.strictEqual(
       textMateRegex(typeReference.match).exec("TYPE REF TO ty_report_state")
@@ -496,7 +501,7 @@ suite("ABAP language basics", () => {
     assert.ok(calls.some((pattern: {
       captures?: Record<string, { name: string }>;
     }) => pattern.captures?.["2"]?.name ===
-      "keyword.control.handler.abap"));
+      "keyword.other.control.handler.abap"));
 
     const globalKeywords = grammar.repository.keywords.patterns
       .map((pattern: { match: string }) => pattern.match)
@@ -578,7 +583,7 @@ suite("ABAP language basics", () => {
       "variable.other.dynamic-clause.sql.abap",
       "constant.language.null.sql.abap",
       "keyword.other.logical.sql.abap",
-      "keyword.control.conditional.sql.abap",
+      "keyword.other.control.conditional.sql.abap",
     ]) {
       assert.match(tokenText, new RegExp(scope.replaceAll(".", "\\.")));
     }

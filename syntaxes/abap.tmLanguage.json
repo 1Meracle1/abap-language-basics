@@ -81,10 +81,10 @@
           "match": "(?i:(?<![!\\-~>/])\\b(SET)[ \\t]+(HANDLER)\\b)",
           "captures": {
             "1": {
-              "name": "keyword.control.set.abap"
+              "name": "keyword.other.control.set.abap"
             },
             "2": {
-              "name": "keyword.control.handler.abap"
+              "name": "keyword.other.control.handler.abap"
             }
           }
         },
@@ -92,7 +92,7 @@
           "match": "(?i:(?<![!\\-~>/])\\b(CALL)[ \\t]+(FUNCTION)[ \\t]+('(?:''|[^'\\r\\n])*'))",
           "captures": {
             "1": {
-              "name": "keyword.control.call.abap"
+              "name": "keyword.other.control.call.abap"
             },
             "2": {
               "name": "keyword.other.function.abap"
@@ -106,7 +106,7 @@
           "match": "(?i:(?<![!\\-~>/])\\b(PERFORM)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
           "captures": {
             "1": {
-              "name": "keyword.control.call.abap"
+              "name": "keyword.other.control.call.abap"
             },
             "2": {
               "name": "entity.name.function.form.abap"
@@ -286,7 +286,7 @@
           "begin": "(?i:^[ \\t]*(FIND|REPLACE|CONCATENATE|SPLIT|SHIFT|TRANSLATE|CONDENSE)\\b(?!-))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.string-processing.abap"
+              "name": "keyword.other.control.string-processing.abap"
             }
           },
           "end": "\\.",
@@ -444,7 +444,7 @@
           "end": "(?i:^[ \\t]*(ENDCLASS)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endclass.abap"
+              "name": "keyword.other.control.endclass.abap"
             }
           },
           "patterns": [
@@ -467,7 +467,7 @@
           "end": "(?i:^[ \\t]*(ENDINTERFACE)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endinterface.abap"
+              "name": "keyword.other.control.endinterface.abap"
             }
           },
           "patterns": [
@@ -490,7 +490,7 @@
           "end": "(?i:^[ \\t]*(ENDMETHOD)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endmethod.abap"
+              "name": "keyword.other.control.endmethod.abap"
             }
           },
           "patterns": [
@@ -513,7 +513,7 @@
           "end": "(?i:^[ \\t]*(ENDFORM)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endform.abap"
+              "name": "keyword.other.control.endform.abap"
             }
           },
           "patterns": [
@@ -539,7 +539,7 @@
           "end": "(?i:^[ \\t]*(ENDFUNCTION)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endfunction.abap"
+              "name": "keyword.other.control.endfunction.abap"
             }
           },
           "patterns": [
@@ -565,7 +565,7 @@
           "end": "(?i:^[ \\t]*(ENDMODULE)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endmodule.abap"
+              "name": "keyword.other.control.endmodule.abap"
             }
           },
           "patterns": [
@@ -579,13 +579,13 @@
           "begin": "(?i:^[ \\t]*(IF)\\b)",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.if.abap"
+              "name": "keyword.other.control.if.abap"
             }
           },
           "end": "(?i:^[ \\t]*(ENDIF)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endif.abap"
+              "name": "keyword.other.control.endif.abap"
             }
           },
           "patterns": [
@@ -599,13 +599,13 @@
           "begin": "(?i:^[ \\t]*(CASE)\\b)",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.case.abap"
+              "name": "keyword.other.control.case.abap"
             }
           },
           "end": "(?i:^[ \\t]*(ENDCASE)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endcase.abap"
+              "name": "keyword.other.control.endcase.abap"
             }
           },
           "patterns": [
@@ -619,13 +619,13 @@
           "begin": "(?i:^[ \\t]*(DO)\\b)",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.do.abap"
+              "name": "keyword.other.control.do.abap"
             }
           },
           "end": "(?i:^[ \\t]*(ENDDO)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.enddo.abap"
+              "name": "keyword.other.control.enddo.abap"
             }
           },
           "patterns": [
@@ -639,13 +639,13 @@
           "begin": "(?i:^[ \\t]*(WHILE)\\b)",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.while.abap"
+              "name": "keyword.other.control.while.abap"
             }
           },
           "end": "(?i:^[ \\t]*(ENDWHILE)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endwhile.abap"
+              "name": "keyword.other.control.endwhile.abap"
             }
           },
           "patterns": [
@@ -659,7 +659,7 @@
           "begin": "(?i:^[ \\t]*(LOOP)\\b(?:[ \\t]+(AT)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))?)",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.loop.abap"
+              "name": "keyword.other.control.loop.abap"
             },
             "2": {
               "name": "keyword.other.internal-table.abap"
@@ -671,7 +671,7 @@
           "end": "(?i:^[ \\t]*(ENDLOOP)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endloop.abap"
+              "name": "keyword.other.control.endloop.abap"
             }
           },
           "patterns": [
@@ -700,13 +700,13 @@
           "begin": "(?i:^[ \\t]*(TRY)\\b)",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.try.abap"
+              "name": "keyword.other.control.try.abap"
             }
           },
           "end": "(?i:^[ \\t]*(ENDTRY)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endtry.abap"
+              "name": "keyword.other.control.endtry.abap"
             }
           },
           "patterns": [
@@ -720,13 +720,13 @@
           "begin": "(?i:^[ \\t]*(SELECT)\\b(?!-)(?!(?:(?!\\.).)*\\b(?:SINGLE|INTO[ \\t\\r\\n]+TABLE|APPENDING[ \\t\\r\\n]+TABLE)\\b))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.sql.select.abap"
+              "name": "keyword.other.control.sql.select.abap"
             }
           },
           "end": "(?i:^[ \\t]*(ENDSELECT)\\b\\.?)",
           "endCaptures": {
             "1": {
-              "name": "keyword.control.endselect.abap"
+              "name": "keyword.other.control.endselect.abap"
             }
           },
           "patterns": [
@@ -759,7 +759,7 @@
           "begin": "(?i:^[ \\t]*(READ)[ \\t]+(TABLE)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.read.abap"
+              "name": "keyword.other.control.read.abap"
             },
             "2": {
               "name": "keyword.other.internal-table.abap"
@@ -785,7 +785,7 @@
           "begin": "(?i:^[ \\t]*(APPEND)\\b(?!-))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.append.abap"
+              "name": "keyword.other.control.append.abap"
             }
           },
           "end": "\\.",
@@ -805,7 +805,7 @@
           "begin": "(?i:^[ \\t]*(INSERT)\\b(?!-))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.insert.abap"
+              "name": "keyword.other.control.insert.abap"
             }
           },
           "end": "\\.",
@@ -825,7 +825,7 @@
           "begin": "(?i:^[ \\t]*(DELETE)[ \\t]+(ADJACENT)[ \\t]+(DUPLICATES)[ \\t]+(FROM)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.delete.abap"
+              "name": "keyword.other.control.delete.abap"
             },
             "2": {
               "name": "keyword.other.internal-table.abap"
@@ -857,7 +857,7 @@
           "begin": "(?i:^[ \\t]*(DELETE)\\b(?![ \\t]+FROM\\b)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.delete.abap"
+              "name": "keyword.other.control.delete.abap"
             },
             "2": {
               "name": "variable.other.table.abap"
@@ -880,7 +880,7 @@
           "begin": "(?i:^[ \\t]*(SORT)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.sort.abap"
+              "name": "keyword.other.control.sort.abap"
             },
             "2": {
               "name": "variable.other.table.abap"
@@ -903,7 +903,7 @@
           "begin": "(?i:^[ \\t]*(COLLECT)\\b(?!-))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.collect.abap"
+              "name": "keyword.other.control.collect.abap"
             }
           },
           "end": "\\.",
@@ -923,7 +923,7 @@
           "begin": "(?i:^[ \\t]*(DESCRIBE)[ \\t]+(TABLE)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.describe.abap"
+              "name": "keyword.other.control.describe.abap"
             },
             "2": {
               "name": "keyword.other.internal-table.abap"
@@ -953,7 +953,7 @@
           "begin": "(?i:^[ \\t]*(MODIFY)[ \\t]+(?:(!?/?[A-Z_][A-Z0-9_/]*)|(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\))))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.modify.abap"
+              "name": "keyword.other.control.modify.abap"
             },
             "2": {
               "name": "variable.other.data-source.abap"
@@ -1105,7 +1105,7 @@
           "begin": "(?i:^[ \\t]*(SELECT)\\b(?!-))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.sql.select.abap"
+              "name": "keyword.other.control.sql.select.abap"
             }
           },
           "end": "\\.",
@@ -1125,7 +1125,7 @@
           "begin": "(?i:^[ \\t]*(INSERT)\\b(?=[ \\t]+(?:(?:INTO[ \\t]+)?[(!?A-Z_/][A-Z0-9_()/]*[ \\t]+(?:VALUES|FROM))))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.sql.insert.abap"
+              "name": "keyword.other.control.sql.insert.abap"
             }
           },
           "end": "\\.",
@@ -1145,7 +1145,7 @@
           "begin": "(?i:^[ \\t]*(UPDATE)[ \\t]+(?:(!?/?[A-Z_][A-Z0-9_/]*)|(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\))))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.sql.update.abap"
+              "name": "keyword.other.control.sql.update.abap"
             },
             "2": {
               "name": "entity.name.table.sql.abap"
@@ -1177,7 +1177,7 @@
           "begin": "(?i:^[ \\t]*(DELETE)[ \\t]+(FROM)[ \\t]+(?:(!?/?[A-Z_][A-Z0-9_/]*)|(\\()[ \\t]*(!?[/A-Z_][A-Z0-9_/]*)[ \\t]*(\\))))",
           "beginCaptures": {
             "1": {
-              "name": "keyword.control.sql.delete.abap"
+              "name": "keyword.other.control.sql.delete.abap"
             },
             "2": {
               "name": "keyword.other.sql.abap"
@@ -1224,7 +1224,7 @@
           "match": "(?i:\\b(SELECT|INSERT|UPDATE|MODIFY|DELETE)\\b(?!-))",
           "captures": {
             "1": {
-              "name": "keyword.control.sql.abap"
+              "name": "keyword.other.control.sql.abap"
             }
           }
         },
@@ -1262,7 +1262,7 @@
           "match": "(?i:\\b(INSERT)[ \\t]+(?:(INTO)[ \\t]+)?(!?/?[A-Z_][A-Z0-9_/]*))",
           "captures": {
             "1": {
-              "name": "keyword.control.sql.insert.abap"
+              "name": "keyword.other.control.sql.insert.abap"
             },
             "2": {
               "name": "keyword.other.sql.abap"
@@ -1276,7 +1276,7 @@
           "match": "(?i:\\b(DELETE)[ \\t]+(FROM)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))",
           "captures": {
             "1": {
-              "name": "keyword.control.sql.delete.abap"
+              "name": "keyword.other.control.sql.delete.abap"
             },
             "2": {
               "name": "keyword.other.sql.abap"
@@ -1352,7 +1352,7 @@
           "match": "(?i:(?<![-~>/])\\b(?:AND|BETWEEN|IN|IS|LIKE|NOT|OR)\\b(?![-~/]))"
         },
         {
-          "name": "keyword.control.conditional.sql.abap",
+          "name": "keyword.other.control.conditional.sql.abap",
           "match": "(?i:(?<![-~>/])\\b(?:WHEN|THEN|ELSE|END)\\b(?![-~/]))"
         },
         {
@@ -2250,7 +2250,7 @@
           "match": "(?i:(?<![-~>/])\\b(INCLUDE)[ \\t]+(TYPE)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*(?:=>[A-Z0-9_/]+)?)(?:[ \\t]+(AS)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*)(?:[ \\t]+(RENAMING)[ \\t]+(WITH)[ \\t]+(SUFFIX)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))?)?)",
           "captures": {
             "1": {
-              "name": "keyword.control.include.abap"
+              "name": "keyword.other.control.include.abap"
             },
             "2": {
               "name": "storage.type.abap"
@@ -2282,7 +2282,7 @@
           "match": "(?i:(?<![-~>/])\\b(INCLUDE)[ \\t]+(STRUCTURE)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*(?:[-~][A-Z0-9_/]+)*)(?:[ \\t]+(AS)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*)(?:[ \\t]+(RENAMING)[ \\t]+(WITH)[ \\t]+(SUFFIX)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))?)?)",
           "captures": {
             "1": {
-              "name": "keyword.control.include.abap"
+              "name": "keyword.other.control.include.abap"
             },
             "2": {
               "name": "storage.type.abap"
@@ -2343,7 +2343,7 @@
     "composite-keywords": {
       "patterns": [
         {
-          "name": "keyword.control.abap",
+          "name": "keyword.other.control.abap",
           "match": "(?i:(?<![!\\-~>/])\\b(?:AUTHORITY-CHECK|BIT-AND|BIT-OR|BIT-XOR|BREAK-POINT|BYTE-ORDER|CLASS-DATA|CLASS-EVENTS|CLASS-METHODS|CLASS-POOL|CUSTOMER-FUNCTION|END-ENHANCEMENT-SECTION|END-OF-DEFINITION|END-OF-PAGE|END-OF-SELECTION|END-TEST-INJECTION|END-TEST-SEAM|ENHANCEMENT-POINT|ENHANCEMENT-SECTION|EXCEPTION-TABLE|EXIT-COMMAND|FIELD-GROUPS|FIELD-SYMBOLS|FUNCTION-POOL|HELP-REQUEST|INTERFACE-POOL|LINE-COUNT|LINE-SELECTION|LINE-SIZE|LIST-PROCESSING|LOAD-OF-PROGRAM|LOG-POINT|MESSAGE-ID|MOVE-CORRESPONDING|NEW-LINE|NEW-PAGE|NO-DISPLAY|NO-EXTENSION|NO-GAPS|NON-UNIQUE|PARAMETER-TABLE|PF-STATUS|PRINT-CONTROL|READ-ONLY|SAP-SPOOL|SELECT-OPTIONS|SELECTION-SCREEN|SELECTION-SET|SELECTION-SETS|SELECTION-TABLE|START-OF-SELECTION|SYNTAX-CHECK|SYSTEM-EXCEPTIONS|TEST-INJECTION|TEST-SEAM|TOP-OF-PAGE|TYPE-POOL|TYPE-POOLS|USER-COMMAND|VALUE-REQUEST)\\b(?![-~/]))"
         }
       ]
@@ -2351,7 +2351,7 @@
     "keywords": {
       "patterns": [
         {
-          "name": "keyword.control.abap",
+          "name": "keyword.other.control.abap",
           "match": "(?i:(?<![!\\-~>/])\\b(?:ABSTRACT|ADD|ALIASES|APPEND|ASSERT|ASSIGN|AT|AUTHORITY|BACK|BEGIN|CALL|CASE|CATCH|CHECK|CLASS|CLEAR|CLEANUP|CLOSE|COLLECT|COMMIT|CONCATENATE|CONDENSE|CONTINUE|CONVERT|CREATE|DELETE|DESCRIBE|DIVIDE|DO|ELSE|ELSEIF|END|ENDAT|ENDCASE|ENDCLASS|ENDDO|ENDENHANCEMENT|ENDEXEC|ENDFORM|ENDFUNCTION|ENDIF|ENDINTERFACE|ENDLOOP|ENDMETHOD|ENDMODULE|ENDPROVIDE|ENDSELECT|ENDTRY|ENDWHILE|ENHANCEMENT|EXEC|EXIT|EXPORT|FETCH|FIND|FORM|FORMAT|FREE|FUNCTION|GENERATE|GET|HIDE|IF|IMPORT|INCLUDE|INITIALIZATION|INSERT|INTERFACE|LEAVE|LOOP|MESSAGE|METHOD|MODIFY|MODULE|MULTIPLY|OPEN|OVERLAY|PARAMETERS|PERFORM|POSITION|RAISE|READ|RECEIVE|REJECT|REPLACE|REPORT|RESERVE|RESUME|RETURN|ROLLBACK|SCROLL|SELECT|SET|SHIFT|SKIP|SORT|SPLIT|STOP|SUBMIT|SUBTRACT|SUM|SUPPRESS|TRANSFER|TRANSLATE|TRUNCATE|TRY|ULINE|UNASSIGN|UNPACK|UPDATE|WAIT|WHEN|WHILE|WINDOW|WRITE)\\b(?![-~/]))"
         },
         {
