@@ -22,7 +22,7 @@ suite("ABAP language basics", () => {
 
   test("owns .ddls files as ABAP CDS", async () => {
     const document = await vscode.workspace.openTextDocument(
-      path.resolve(__dirname, "../../../examples/ZC_SalesPerformance.ddls"),
+      path.resolve(__dirname, "../test/fixtures/highlighting.ddls"),
     );
     await vscode.window.showTextDocument(document);
 
@@ -44,7 +44,7 @@ suite("ABAP language basics", () => {
     }
 
     const document = await vscode.workspace.openTextDocument(
-      path.resolve(__dirname, "../../../examples/ZC_SalesPerformance.ddls"),
+      path.resolve(__dirname, "../test/fixtures/highlighting.ddls"),
     );
     await vscode.window.showTextDocument(document);
     const tokens = await vscode.commands.executeCommand<Array<{

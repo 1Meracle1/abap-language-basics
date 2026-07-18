@@ -1,0 +1,68 @@
+// Feature-dense ABAP Cloud CDS example.
+@EndUserText.label: 'Sales performance workbench'
+@AccessControl.authorizationCheck: #CHECK
+@ObjectModel.usageType: {
+  serviceQuality: #D,
+  sizeCategory: #XL,
+  dataClass: #MIXED
+}
+define view entity ZC_SalesPerformance
+  with parameters
+    @Environment.systemField: #SYSTEM_DATE
+    p_key_date         : abap.dats,
+    p_language         : abap.lang,
+    p_display_currency : abap.cuky,
+    p_target_unit      : abap.unit( 3 )
+  as select from ZI_SalesItemFact as Item
+    inner join ZI_SalesHeader as Header
+      on Header.SalesDocument = Item.SalesDocument
+    left outer to one join ZI_Customer as Customer
+      on Customer.Customer = Item.SoldToParty
+    association of many to one ZI_ProductText as _ProductText
+      on  _ProductText.Product = $projection.Product
+      and _ProductText.Language = $parameters.p_language
+{
+  @UI.lineItem: [{ position: 10, importance: #HIGH }]
+  key Item.Product as Product,
+
+  @EndUserText.label: 'Customer name'
+  coalesce(
+    Customer.CustomerName,
+    cast( Item.SoldToParty as abap.char( 80 ) )
+  ) as CustomerName,
+
+  @Semantics.amount.currencyCode: 'DisplayCurrency'
+  @DefaultAggregation: #SUM
+  sum(
+    currency_conversion(
+      amount             => Item.NetAmount,
+      source_currency    => Item.TransactionCurrency,
+      target_currency    => $parameters.p_display_currency,
+      exchange_rate_date => $parameters.p_key_date,
+      error_handling     => 'SET_TO_NULL'
+    )
+  ) as NetAmount,
+
+  case
+    when get_numeric_value( $projection.NetAmount ) = 0
+      then cast( 0 as abap.dec( 9, 2 ) )
+    else abap.char'POSITIVE'
+  end as MarginClass,
+
+  unit_conversion(
+    quantity       => Item.OrderQuantity,
+    source_unit    => Item.OrderQuantityUnit,
+    target_unit    => $parameters.p_target_unit
+  ) as OrderQuantity,
+
+  cast( $session.user as abap.char( 12 ) ) as ExecutedBy,
+  _ProductText
+}
+where Item.PostingDate between
+  dats_add_days( $parameters.p_key_date, -30, 'NULL' )
+  and $parameters.p_key_date
+group by
+  Item.Product,
+  Customer.CustomerName,
+  $session.user
+having count( distinct Item.SalesDocument ) > 0;
