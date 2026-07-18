@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.3
+
+- Added highlighting for built-in functions and generic, instance, static, and
+  interface procedure calls.
+- Expanded intrinsic type highlighting for ABAP 7.50.
+- Improved Open SQL `SELECT` block detection for parenthesized select lists and
+  same-line table targets.
+
 ## 0.0.2
 
 - Expanded ABAP 7.50 highlighting for declarations, object-oriented syntax,

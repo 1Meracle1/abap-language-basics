@@ -46,10 +46,13 @@ DATA(ls_indexed) = lt_rows[ KEY by_text INDEX 1 ].
 DATA(lv_text) = lt_rows[ id = 1 ]-text.
 DATA(lv_nested) = lt_groups[ id = 1 ]-rows[ id = 2 ]-text.
 DATA(lv_exists) = xsdbool( line_exists( lt_rows[ id = 1 ] ) ).
+DATA(lv_length) = strlen( lv_text ).
+DATA(lv_hash) = calculate_package_hash( lv_text ).
 
 DATA(lr_row) = REF #( lt_rows[ 1 ] ).
 DATA(lv_id) = lr_row->*-id.
 DATA(lo_type) = cl_abap_typedescr=>describe_by_data( lv_text ).
+CALL METHOD me->handler.
 
 DATA:
   BEGIN OF ls_keywords,

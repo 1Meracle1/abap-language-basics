@@ -50,6 +50,9 @@
           "include": "#declarations"
         },
         {
+          "include": "#procedure-calls"
+        },
+        {
           "include": "#declaration-types"
         },
         {
@@ -112,6 +115,95 @@
               "name": "entity.name.function.form.abap"
             }
           }
+        },
+        {
+          "match": "(?i:(?<![!\\-~>/])\\b(CALL)[ \\t]+(METHOD)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*)(=>)(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.control.call.abap"
+            },
+            "2": {
+              "name": "keyword.other.function.abap"
+            },
+            "3": {
+              "name": "entity.name.type.class.reference.abap"
+            },
+            "4": {
+              "name": "punctuation.accessor.static.abap"
+            },
+            "5": {
+              "name": "entity.name.function.member.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![!\\-~>/])\\b(CALL)[ \\t]+(METHOD)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*)(->)(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.control.call.abap"
+            },
+            "2": {
+              "name": "keyword.other.function.abap"
+            },
+            "3": {
+              "name": "variable.other.object.abap"
+            },
+            "4": {
+              "name": "punctuation.accessor.object.abap"
+            },
+            "5": {
+              "name": "entity.name.function.member.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![!\\-~>/])\\b(CALL)[ \\t]+(METHOD)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.control.call.abap"
+            },
+            "2": {
+              "name": "keyword.other.function.abap"
+            },
+            "3": {
+              "name": "entity.name.function.abap"
+            }
+          }
+        }
+      ]
+    },
+    "procedure-calls": {
+      "patterns": [
+        {
+          "include": "#built-in-functions"
+        },
+        {
+          "name": "entity.name.function.member.abap",
+          "match": "(?i:(?<==>)!?/?[A-Z_][A-Z0-9_/]*\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "entity.name.function.member.abap",
+          "match": "(?i:(?<=->)!?/?[A-Z_][A-Z0-9_/]*\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "entity.name.function.member.abap",
+          "match": "(?i:(?<=~)!?/?[A-Z_][A-Z0-9_/]*\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "entity.name.function.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b!?/?[A-Z_][A-Z0-9_/]*\\b(?=[ \\t]*\\())"
+        }
+      ]
+    },
+    "built-in-functions": {
+      "patterns": [
+        {
+          "name": "support.function.builtin.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ABS|ACOS|ASIN|ATAN|BOOLC|BOOLX|CEIL|CHARLEN|CONDENSE|CONCAT_LINES_OF|CONTAINS|CONTAINS_ANY_NOT_OF|CONTAINS_ANY_OF|COS|COSH|COUNT|COUNT_ANY_NOT_OF|COUNT_ANY_OF|DBMAXLEN|ESCAPE|EXP|FIND|FIND_ANY_NOT_OF|FIND_ANY_OF|FLOOR|FRAC|FROM_MIXED|GET_BIT|INSERT|IPOW|LINE_EXISTS|LINE_INDEX|LINES|LOG|LOG10|MATCH|MATCHES|NMAX|NMIN|NUMOFCHAR|REPEAT|REPLACE|RESCALE|REVERSE|ROUND|SET_BIT|SHIFT_LEFT|SHIFT_RIGHT|SIGN|SIN|SINH|SQRT|STRLEN|SUBSTRING|SUBSTRING_AFTER|SUBSTRING_BEFORE|SUBSTRING_FROM|SUBSTRING_TO|TAN|TANH|TO_LOWER|TO_MIXED|TO_UPPER|TRANSLATE|TRUNC|XSDBOOL|XSTRLEN)\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "support.function.builtin.datetime.abap",
+          "match": "(?i:(?<![!\\-~>/])\\b(?:DATS_ADD_DAYS|DATS_ADD_MONTHS|DATS_DAYS_BETWEEN|DATS_IS_VALID|DATS_TIMS_TO_TSTMP|TIMS_IS_VALID|TSTMP_ADD|TSTMP_CURRENT_UTCTIMESTAMP|TSTMP_IS_VALID|TSTMP_SECONDS_BETWEEN|TSTMP_TO_DATS|TSTMP_TO_DST|TSTMP_TO_TIMS|TSTMP_TO_UTCLONG|UTCLONG_ADD|UTCLONG_CURRENT|UTCLONG_DIFF|UTCLONG_DISTANCE|UTCLONG_TO_TSTMP)\\b(?=[ \\t]*\\())"
         }
       ]
     },
@@ -717,7 +809,7 @@
         },
         {
           "name": "meta.block.select.abap",
-          "begin": "(?i:^[ \\t]*(SELECT)\\b(?!-)(?!(?:(?!\\.).)*\\b(?:SINGLE|INTO[ \\t\\r\\n]+TABLE|APPENDING[ \\t\\r\\n]+TABLE)\\b))",
+          "begin": "(?i:^[ \\t]*(SELECT)\\b(?!-)(?![ \\t]+(?:FROM\\b|\\())(?!(?:(?!\\.).)*\\b(?:SINGLE|INTO[ \\t]+TABLE|APPENDING[ \\t]+TABLE)\\b))",
           "beginCaptures": {
             "1": {
               "name": "keyword.other.control.sql.select.abap"
@@ -2311,7 +2403,7 @@
           }
         },
         {
-          "match": "(?i:(?<![-~>/])\\b(TYPE)([ \\t]+(?:(?:(?:(?:STANDARD|SORTED|HASHED|ANY|INDEX)[ \\t]+)?TABLE[ \\t]+OF[ \\t]+)(?:REF[ \\t]+TO[ \\t]+)?|RANGE[ \\t]+OF[ \\t]+|LINE[ \\t]+OF[ \\t]+|REF[ \\t]+TO[ \\t]+)?)(?!(?:ANY|BYTE|C|CHARACTER|CLIKE|CSEQUENCE|D|DATA|DECFLOAT16|DECFLOAT34|F|HASHED|I|INDEX|INT1|INT2|INT4|INT8|N|NUMERIC|OBJECT|P|REF|SIMPLE|SORTED|STANDARD|STRING|STRUCTURE|TABLE|X|XSEQUENCE|XSTRING)\\b)(!?/?[A-Z_][A-Z0-9_/]*(?:(?:=>|~)[A-Z0-9_/]+)?))",
+          "match": "(?i:(?<![-~>/])\\b(TYPE)([ \\t]+(?:(?:(?:(?:STANDARD|SORTED|HASHED|ANY|INDEX)[ \\t]+)?TABLE[ \\t]+OF[ \\t]+)(?:REF[ \\t]+TO[ \\t]+)?|RANGE[ \\t]+OF[ \\t]+|LINE[ \\t]+OF[ \\t]+|REF[ \\t]+TO[ \\t]+)?)(?!(?:ANY|B|BYTE|C|CHARACTER|CLIKE|CSEQUENCE|D|DATA|DECFLOAT|DECFLOAT16|DECFLOAT34|F|HASHED|I|INDEX|INT1|INT2|INT4|INT8|N|NUMERIC|OBJECT|P|REF|S|SIMPLE|SORTED|STANDARD|STRING|STRUCTURE|T|TABLE|UTCLONG|X|XSEQUENCE|XSTRING)\\b)(!?/?[A-Z_][A-Z0-9_/]*(?:(?:=>|~)[A-Z0-9_/]+)?))",
           "captures": {
             "1": {
               "name": "storage.type.abap"
@@ -2356,15 +2448,11 @@
         },
         {
           "name": "support.type.builtin.abap",
-          "match": "(?i:(?<![!\\-~>/])\\b(?:ANY|BYTE|C|CHARACTER|CLIKE|CSEQUENCE|D|DATA|DECFLOAT16|DECFLOAT34|F|I|INT1|INT2|INT4|INT8|N|NUMERIC|OBJECT|P|SIMPLE|STRING|X|XSEQUENCE|XSTRING)\\b(?![-~/]))"
+          "match": "(?i:(?<![!\\-~>/])\\b(?:ANY|B|BYTE|C|CHARACTER|CLIKE|CSEQUENCE|D|DATA|DECFLOAT|DECFLOAT16|DECFLOAT34|F|I|INT1|INT2|INT4|INT8|N|NUMERIC|OBJECT|P|S|SIMPLE|STRING|T|UTCLONG|X|XSEQUENCE|XSTRING)\\b(?![-~/]))"
         },
         {
           "name": "storage.type.abap",
           "match": "(?i:(?<![!\\-~>/])\\b(?:FIELD-SYMBOLS|HASHED|INDEX|REF|REFERENCE|SORTED|STANDARD|STRUCTURE|TABLE|TYPE|TYPES)\\b(?![-~/]))"
-        },
-        {
-          "name": "support.function.abap",
-          "match": "(?i:(?<![!\\-~>/])\\b(?:BOOLC|CAST|COND|CONV|CORRESPONDING|EXACT|FILTER|LINE_EXISTS|LINES|NEW|REDUCE|REF|SWITCH|XSDBOOL|VALUE)\\b(?=[ \\t]*[#(]))"
         },
         {
           "name": "support.function.aggregate.sql.abap",

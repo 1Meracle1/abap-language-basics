@@ -237,21 +237,21 @@ suite("ABAP language basics", () => {
     const otherKeyword = grammar.repository.keywords.patterns.find(
       (pattern: { name: string }) => pattern.name === "keyword.other.abap",
     );
-    const supportFunction = grammar.repository.keywords.patterns.find(
-      (pattern: { name: string }) => pattern.name === "support.function.abap",
-    );
+    const supportFunctions = grammar.repository["built-in-functions"].patterns;
     const compositeKeyword = grammar.repository["composite-keywords"].patterns[0];
     assert.ok(otherKeyword);
-    assert.ok(supportFunction);
-    assert.doesNotMatch(
-      "DATA lv_text TYPE string VALUE 'text'.",
-      textMateRegex(supportFunction.match),
-    );
-    assert.doesNotMatch(
-      "CONSTANTS lc_number TYPE i VALUE 42.",
-      textMateRegex(supportFunction.match),
-    );
-    assert.match("VALUE #(", textMateRegex(supportFunction.match));
+    assert.ok(supportFunctions.some((pattern: { name: string }) =>
+      pattern.name === "support.function.builtin.abap"));
+    for (const pattern of supportFunctions) {
+      assert.doesNotMatch(
+        "DATA lv_text TYPE string VALUE 'text'.",
+        textMateRegex(pattern.match),
+      );
+      assert.doesNotMatch(
+        "CONSTANTS lc_number TYPE i VALUE 42.",
+        textMateRegex(pattern.match),
+      );
+    }
     assert.match("VALUE", textMateRegex(otherKeyword.match));
     for (const keyword of [
       "DEFINITION", "FIELD", "IMPLEMENTATION", "INPUT", "INSTANCES",
@@ -367,6 +367,69 @@ suite("ABAP language basics", () => {
       (pattern: { name: string }) =>
         pattern.name === "punctuation.definition.variable.host.abap",
     ));
+  });
+
+  test("covers intrinsic types, built-in functions, and procedure calls", () => {
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+
+    const builtinType = grammar.repository.keywords.patterns.find(
+      (pattern: { name: string }) =>
+        pattern.name === "support.type.builtin.abap",
+    );
+    assert.ok(builtinType);
+    for (const typeName of [
+      "ANY", "B", "C", "D", "DECFLOAT", "DECFLOAT16", "DECFLOAT34",
+      "F", "I", "INT1", "INT2", "INT4", "INT8", "N", "P", "S",
+      "STRING", "T", "UTCLONG", "X", "XSTRING",
+    ]) {
+      assert.match(typeName, textMateRegex(builtinType.match));
+    }
+
+    const builtinFunctions = grammar.repository["built-in-functions"].patterns;
+    const functionText = builtinFunctions
+      .map((pattern: { match: string }) => pattern.match)
+      .join("\n");
+    for (const functionName of [
+      "ABS", "CHARLEN", "CONCAT_LINES_OF", "CONTAINS_ANY_OF", "COUNT",
+      "FIND_ANY_NOT_OF", "LINE_EXISTS", "LINE_INDEX", "MATCHES", "NMAX",
+      "REPLACE", "ROUND", "SHIFT_RIGHT", "SUBSTRING_TO", "TO_UPPER",
+      "TSTMP_ADD", "UTCLONG_CURRENT", "XSDBOOL", "XSTRLEN",
+    ]) {
+      assert.match(functionText, new RegExp(`\\b${functionName}\\b`));
+    }
+
+    const procedureCalls = grammar.repository["procedure-calls"].patterns;
+    assert.ok(procedureCalls.some((pattern: { include?: string }) =>
+      pattern.include === "#built-in-functions"));
+    for (const syntax of [
+      "calculate_package_hash( value )",
+      "cl_package=>calculate_hash( value )",
+      "lo_package->calculate_hash( value )",
+      "zif_package~calculate_hash( value )",
+    ]) {
+      assert.ok(procedureCalls.some((pattern: { match?: string }) =>
+        pattern.match && textMateRegex(pattern.match).test(syntax)),
+      `no procedure-call pattern matched ${syntax}`);
+    }
+    const calls = grammar.repository.calls.patterns;
+    assert.ok(calls.some((pattern: { match?: string }) =>
+      pattern.match && textMateRegex(pattern.match).test(
+        "CALL METHOD lo_package->calculate_hash",
+      )));
+
+    const genericCall = procedureCalls.find((pattern: { name?: string }) =>
+      pattern.name === "entity.name.function.abap");
+    assert.ok(genericCall);
+
+    const codeIncludes = grammar.repository.code.patterns
+      .map((pattern: { include?: string }) => pattern.include);
+    assert.ok(codeIncludes.indexOf("#open-sql") <
+      codeIncludes.indexOf("#procedure-calls"));
+    assert.ok(codeIncludes.indexOf("#declarations") <
+      codeIncludes.indexOf("#procedure-calls"));
   });
 
   test("scopes structured, table, reference, and LIKE declarations", () => {
@@ -646,7 +709,12 @@ suite("ABAP language basics", () => {
       const token = tokens.find(candidate =>
         candidate.c === keyword &&
         /\bkeyword\.other\.sql\.abap\b/.test(candidate.t));
-      assert.ok(token, `VS Code did not emit an SQL ${keyword} syntax token`);
+      assert.ok(
+        token,
+        `VS Code did not emit an SQL ${keyword} syntax token: ${JSON.stringify(
+          tokens.filter(candidate => candidate.c.includes(keyword)),
+        )}`,
+      );
       assert.ok(
         token.r.dark_plus,
         `Dark+ did not assign ${keyword} a foreground: ${JSON.stringify(token)}`,
