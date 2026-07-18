@@ -9,9 +9,12 @@ The TextMate grammar is lexical: it recognizes comments, strings, templates,
 ABAP dash-composite keywords, declarations, executable reports and selection
 screens, class and interface constructs, chained component declarations,
 structured data and type declarations, table and reference types, OO method and
-event signatures, constructor operators, Open SQL clauses, core statement
-families, system fields, text symbols, and nested named/control-flow blocks. It
-guards selectors such as `sy-subrc`, `lo_object->method`, and
+event signatures, constructor operators, Open SQL clauses, AMDP method headers,
+embedded HANA SQLScript, core statement families, system fields, text symbols,
+and nested named/control-flow blocks. SQLScript highlighting covers SQL queries,
+table and host variables, procedural control flow, declarations and handlers,
+HANA built-in functions, types, comments, strings, and operators. It guards
+selectors such as `sy-subrc`, `lo_object->method`, and
 `zif_interface~method` from partial keyword matches. It does not resolve names
 or parse complete ABAP syntax.
 

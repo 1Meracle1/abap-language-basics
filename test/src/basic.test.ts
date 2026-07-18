@@ -1,5 +1,6 @@
 import * as assert from "assert";
 import * as fs from "fs";
+import * as os from "os";
 import * as path from "path";
 import * as vscode from "vscode";
 
@@ -51,6 +52,97 @@ suite("ABAP language basics", () => {
     assert.ok(
       includeToken.r.dark_plus,
       `Dark+ did not assign INCLUDE a foreground: ${JSON.stringify(includeToken)}`,
+    );
+  });
+
+  test("embeds SQLScript syntax inside AMDP methods", async () => {
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+    const codeIncludes = grammar.repository.code.patterns
+      .map((pattern: { include?: string }) => pattern.include);
+    assert.ok(codeIncludes.indexOf("#amdp-sqlscript") <
+      codeIncludes.indexOf("#blocks"));
+
+    const amdp = grammar.repository["amdp-sqlscript"].patterns[0];
+    assert.strictEqual(
+      amdp.name,
+      "meta.embedded.block.sqlscript.amdp.abap",
+    );
+    assert.strictEqual(amdp.contentName, "source.sqlscript.embedded.abap");
+    assert.ok(textMateRegex(amdp.begin).test(
+      "    BY DATABASE PROCEDURE FOR HDB",
+    ));
+    assert.ok(textMateRegex(amdp.end).test("  ENDMETHOD."));
+
+    const sqlscript = JSON.stringify(grammar.repository["sqlscript-tokens"]);
+    for (const construct of [
+      "APPLY_FILTER", "CONDITION", "DENSE_RANK", "GROUPING", "HANDLER",
+      "INTERSECT", "MESSAGE_TEXT", "PARTITION", "RESIGNAL", "ROW_NUMBER",
+      "SESSION_CONTEXT", "SIGNAL", "SQL_ERROR_CODE", "UNBOUNDED",
+    ]) {
+      assert.match(sqlscript, new RegExp(`\\b${construct}\\b`));
+    }
+
+    const temporaryDirectory = fs.mkdtempSync(path.join(
+      os.tmpdir(),
+      "abap-language-basics-",
+    ));
+    const temporarySource = path.join(temporaryDirectory, "amdp.abap");
+    fs.writeFileSync(temporarySource, [
+      "CLASS zcl_amdp IMPLEMENTATION.",
+      "  METHOD analyze",
+      "    BY DATABASE PROCEDURE FOR HDB",
+      "    LANGUAGE SQLSCRIPT",
+      "    OPTIONS READ-ONLY",
+      "    USING sflight.",
+      "    -- SQLScript comment",
+      "    lt_ranked = SELECT ROW_NUMBER() OVER (PARTITION BY carrid)",
+      "      FROM sflight WHERE carrid = :iv_carrid;",
+      "    IF ::SQL_ERROR_CODE <> 0 THEN",
+      "      SIGNAL SQL_ERROR_CODE 10001 SET MESSAGE_TEXT = 'failed';",
+      "    END IF;",
+      "  ENDMETHOD.",
+      "ENDCLASS.",
+    ].join("\n"));
+
+    let tokens: Array<{
+      c: string;
+      t: string;
+      r: Record<string, string | undefined>;
+    }>;
+    try {
+      const document = await vscode.workspace.openTextDocument(temporarySource);
+      await vscode.window.showTextDocument(document);
+      tokens = await vscode.commands.executeCommand<typeof tokens>(
+        "_workbench.captureSyntaxTokens",
+        document.uri,
+      );
+    } finally {
+      fs.rmSync(temporaryDirectory, { recursive: true });
+    }
+
+    const selectToken = tokens.find(token => token.c === "SELECT");
+    assert.ok(selectToken);
+    assert.match(selectToken.t, /\bkeyword\.other\.control\.dml\.sqlscript\b/);
+    assert.match(selectToken.t, /\bsource\.sqlscript\.embedded\.abap\b/);
+
+    const hostVariable = tokens.find(token => token.c === "iv_carrid");
+    assert.ok(hostVariable);
+    assert.match(hostVariable.t, /\bvariable\.other\.host\.sqlscript\b/);
+
+    const sqlComment = tokens.find(token =>
+      token.c === "-- SQLScript comment");
+    assert.ok(sqlComment);
+    assert.match(sqlComment.t, /\bcomment\.line\.double-dash\.sqlscript\b/);
+
+    const endMethod = tokens.find(token => token.c === "ENDMETHOD");
+    assert.ok(endMethod);
+    assert.match(endMethod.t, /\bkeyword\.other\.control\.endmethod\.abap\b/);
+    assert.doesNotMatch(
+      endMethod.t,
+      /\bsource\.sqlscript\.embedded\.abap\b/,
     );
   });
 

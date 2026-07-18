@@ -26,6 +26,9 @@
           "include": "#strings"
         },
         {
+          "include": "#amdp-sqlscript"
+        },
+        {
           "include": "#blocks"
         },
         {
@@ -75,6 +78,249 @@
         },
         {
           "include": "#operators"
+        }
+      ]
+    },
+    "amdp-sqlscript": {
+      "patterns": [
+        {
+          "name": "meta.embedded.block.sqlscript.amdp.abap",
+          "contentName": "source.sqlscript.embedded.abap",
+          "begin": "(?i:^[ \\t]*(BY)[ \\t]+(DATABASE)[ \\t]+(PROCEDURE)[ \\t]+(FOR)[ \\t]+(HDB)\\b)",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.other.amdp.abap"
+            },
+            "2": {
+              "name": "keyword.other.amdp.abap"
+            },
+            "3": {
+              "name": "keyword.other.amdp.abap"
+            },
+            "4": {
+              "name": "keyword.other.amdp.abap"
+            },
+            "5": {
+              "name": "constant.language.database.amdp.abap"
+            }
+          },
+          "end": "(?i:^(?=[ \\t]*ENDMETHOD\\b))",
+          "patterns": [
+            {
+              "include": "#amdp-header"
+            },
+            {
+              "include": "#sqlscript-tokens"
+            }
+          ]
+        }
+      ]
+    },
+    "amdp-header": {
+      "patterns": [
+        {
+          "match": "(?i:\\b(LANGUAGE)[ \\t]+(SQLSCRIPT)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.amdp.abap"
+            },
+            "2": {
+              "name": "support.language.sqlscript.amdp.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(OPTIONS)[ \\t]+(READ-ONLY)\\b)",
+          "captures": {
+            "1": {
+              "name": "keyword.other.amdp.abap"
+            },
+            "2": {
+              "name": "storage.modifier.amdp.abap"
+            }
+          }
+        },
+        {
+          "name": "keyword.other.amdp.abap",
+          "match": "(?i:\\bUSING\\b)"
+        }
+      ]
+    },
+    "sqlscript-tokens": {
+      "patterns": [
+        {
+          "include": "#sqlscript-comments"
+        },
+        {
+          "include": "#sqlscript-strings"
+        },
+        {
+          "match": "(?i:(::)(SQL_ERROR_CODE|SQL_ERROR_MESSAGE|ROWCOUNT)\\b)",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.variable.system.sqlscript"
+            },
+            "2": {
+              "name": "variable.language.system.sqlscript"
+            }
+          }
+        },
+        {
+          "match": "(?i:(:)([A-Z_][A-Z0-9_#$]*))",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.variable.sqlscript"
+            },
+            "2": {
+              "name": "variable.other.host.sqlscript"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(DECLARE)[ \\t]+([A-Z_][A-Z0-9_#$]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.declaration.sqlscript"
+            },
+            "2": {
+              "name": "variable.other.declaration.sqlscript"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(FROM|JOIN|UPDATE|INTO|USING)[ \\t]+([A-Z_][A-Z0-9_#$./]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.sqlscript"
+            },
+            "2": {
+              "name": "entity.name.table.sqlscript"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b(AS)[ \\t]+([A-Z_][A-Z0-9_#$]*))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.sqlscript"
+            },
+            "2": {
+              "name": "entity.name.alias.sqlscript"
+            }
+          }
+        },
+        {
+          "match": "(?i:\\b([A-Z_][A-Z0-9_#$]*)(\\.)([A-Z_][A-Z0-9_#$]*)\\b)",
+          "captures": {
+            "1": {
+              "name": "variable.other.table-alias.sqlscript"
+            },
+            "2": {
+              "name": "punctuation.accessor.sqlscript"
+            },
+            "3": {
+              "name": "variable.other.column.sqlscript"
+            }
+          }
+        },
+        {
+          "name": "support.function.aggregate.sqlscript",
+          "match": "(?i:\\b(?:AVG|COUNT|MAX|MIN|SUM|GROUPING)\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "support.function.window.sqlscript",
+          "match": "(?i:\\b(?:DENSE_RANK|FIRST_VALUE|LAG|LAST_VALUE|LEAD|NTILE|RANK|ROW_NUMBER)\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "support.function.builtin.sqlscript",
+          "match": "(?i:\\b(?:ABS|APPLY_FILTER|CEIL|COALESCE|CONCAT|CURRENT_DATE|CURRENT_TIME|CURRENT_TIMESTAMP|FLOOR|LENGTH|LOWER|LPAD|LTRIM|MOD|MONTH|NULLIF|REPLACE|ROUND|RPAD|RTRIM|SESSION_CONTEXT|SUBSTRING|TO_DATE|TO_DECIMAL|TO_INTEGER|TO_NVARCHAR|TRIM|UPPER|YEAR)\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "entity.name.function.sqlscript",
+          "match": "(?i:\\b[A-Z_][A-Z0-9_#$]*\\b(?=[ \\t]*\\())"
+        },
+        {
+          "name": "support.type.builtin.sqlscript",
+          "match": "(?i:\\b(?:BIGINT|BINARY|BOOLEAN|DATE|DECIMAL|DOUBLE|INTEGER|NCLOB|NVARCHAR|REAL|SECONDDATE|SMALLDECIMAL|SMALLINT|TIME|TIMESTAMP|TINYINT|VARBINARY|VARCHAR)\\b)"
+        },
+        {
+          "name": "keyword.other.control.dml.sqlscript",
+          "match": "(?i:\\b(?:DELETE|INSERT|MERGE|SELECT|TRUNCATE|UPDATE|UPSERT)\\b)"
+        },
+        {
+          "name": "keyword.other.control.flow.sqlscript",
+          "match": "(?i:\\b(?:BEGIN|BREAK|CASE|CONTINUE|DO|ELSE|ELSEIF|END|FOR|FOREACH|IF|RETURN|THEN|WHILE)\\b)"
+        },
+        {
+          "name": "keyword.other.declaration.sqlscript",
+          "match": "(?i:\\b(?:CONDITION|DECLARE|EXIT|HANDLER|RESIGNAL|SIGNAL)\\b)"
+        },
+        {
+          "name": "keyword.other.logical.sqlscript",
+          "match": "(?i:\\b(?:ALL|AND|ANY|BETWEEN|EXISTS|IN|IS|LIKE|NOT|OR)\\b)"
+        },
+        {
+          "name": "keyword.other.sqlscript",
+          "match": "(?i:\\b(?:ASC|AS|BY|CURRENT|DESC|DISTINCT|EXCEPT|FROM|FULL|GROUP|GROUPING|HAVING|INNER|INTERSECT|INTO|JOIN|LEFT|LIMIT|MESSAGE_TEXT|ON|ORDER|OUTER|OVER|PARTITION|PRECEDING|RIGHT|ROW|ROWS|SET|SETS|SQL_ERROR_CODE|TOP|UNBOUNDED|UNION|USING|VALUES|WHERE|WITH)\\b)"
+        },
+        {
+          "name": "constant.language.sqlscript",
+          "match": "(?i:\\b(?:FALSE|NULL|TRUE)\\b)"
+        },
+        {
+          "name": "constant.numeric.sqlscript",
+          "match": "(?i:(?<![A-Z0-9_#$])(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:E[+-]?\\d+)?(?![A-Z0-9_#$]))"
+        },
+        {
+          "name": "keyword.operator.sqlscript",
+          "match": "\\|\\||:=|=>|<>|!=|<=|>=|=|<|>|\\+|-|\\*|/|%"
+        },
+        {
+          "name": "punctuation.separator.sqlscript",
+          "match": "[,;]"
+        },
+        {
+          "name": "punctuation.section.group.sqlscript",
+          "match": "[()]"
+        },
+        {
+          "name": "variable.other.sqlscript",
+          "match": "(?i:[A-Z_][A-Z0-9_#$]*)"
+        }
+      ]
+    },
+    "sqlscript-comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-dash.sqlscript",
+          "match": "--.*$"
+        },
+        {
+          "name": "comment.block.sqlscript",
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.sqlscript"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.sqlscript"
+            }
+          }
+        }
+      ]
+    },
+    "sqlscript-strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.sqlscript",
+          "match": "'(?:''|[^'\\r\\n])*'"
+        },
+        {
+          "name": "string.quoted.double.identifier.sqlscript",
+          "match": "\"(?:\"\"|[^\"\\r\\n])*\""
         }
       ]
     },
