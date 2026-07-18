@@ -20,6 +20,63 @@ suite("ABAP language basics", () => {
     assert.strictEqual(document.languageId, "abap");
   });
 
+  test("owns .ddls files as ABAP CDS", async () => {
+    const document = await vscode.workspace.openTextDocument(
+      path.resolve(__dirname, "../../../examples/ZC_SalesPerformance.ddls"),
+    );
+    await vscode.window.showTextDocument(document);
+
+    assert.strictEqual(document.languageId, "abap-cds");
+  });
+
+  test("tokenizes the feature-dense CDS example", async () => {
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap-cds.tmLanguage.json"),
+      "utf8",
+    ));
+    const serializedGrammar = JSON.stringify(grammar);
+    for (const construct of [
+      "define", "association", "parameters", "currency_conversion",
+      "dats_add_days", "get_numeric_value", "unit_conversion",
+      "parameters|projection|session", "support.type.builtin.cds",
+    ]) {
+      assert.match(serializedGrammar, new RegExp(construct));
+    }
+
+    const document = await vscode.workspace.openTextDocument(
+      path.resolve(__dirname, "../../../examples/ZC_SalesPerformance.ddls"),
+    );
+    await vscode.window.showTextDocument(document);
+    const tokens = await vscode.commands.executeCommand<Array<{
+      c: string;
+      t: string;
+      r: Record<string, string | undefined>;
+    }>>("_workbench.captureSyntaxTokens", document.uri);
+
+    const expectScope = (text: string, scope: RegExp): void => {
+      const token = tokens.find(candidate => candidate.c === text &&
+        scope.test(candidate.t));
+      assert.ok(
+        token,
+        `expected ${JSON.stringify(text)} with ${scope}; matching text: ${
+          JSON.stringify(tokens.filter(candidate => candidate.c === text))}`,
+      );
+    };
+
+    expectScope("ZC_SalesPerformance", /entity\.name\.type\.view\.cds/);
+    expectScope("EndUserText.label", /attribute-name\.annotation\.cds/);
+    expectScope("#CHECK", /constant\.language\.enum\.cds/);
+    expectScope("p_key_date", /variable\.parameter\.cds/);
+    expectScope("abap.dats", /support\.type\.builtin\.cds/);
+    expectScope("ZI_SalesItemFact", /entity\.name\.type\.datasource\.cds/);
+    expectScope("parameters", /variable\.language\.cds/);
+    expectScope("currency_conversion", /support\.function\.builtin\.cds/);
+    expectScope("=>", /keyword\.operator\.assignment\.named-argument\.cds/);
+    expectScope("Item", /variable\.other\.object\.cds/);
+    expectScope("// Feature-dense ABAP Cloud CDS example.",
+      /comment\.line\.double-slash\.cds/);
+  });
+
   test("uses TextMate-compatible regular-expression options", () => {
     const grammar = JSON.parse(fs.readFileSync(
       path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),

@@ -1,8 +1,8 @@
 {
   "name": "abap-language-basics",
   "displayName": "ABAP Language Basics",
-  "description": "Lightweight ABAP syntax highlighting, snippets, folding, and editor configuration.",
-  "version": "0.0.3",
+  "description": "Syntax highlighting for ABAP, AMDP SQLScript, and ABAP CDS, with snippets, folding, and editor configuration.",
+  "version": "0.0.4",
   "publisher": "1meracle1",
   "license": "MIT",
   "author": "ABAP LSP contributors",
@@ -25,7 +25,11 @@
   ],
   "keywords": [
     "abap",
+    "abap cds",
+    "amdp",
+    "hana",
     "sap",
+    "sqlscript",
     "syntax",
     "snippets"
   ],
@@ -73,6 +77,17 @@
           ".abap"
         ],
         "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "abap-cds",
+        "aliases": [
+          "ABAP CDS",
+          "CDS"
+        ],
+        "extensions": [
+          ".ddls"
+        ],
+        "configuration": "./cds-language-configuration.json"
       }
     ],
     "grammars": [
@@ -80,6 +95,11 @@
         "language": "abap",
         "scopeName": "source.abap",
         "path": "./syntaxes/abap.tmLanguage.json"
+      },
+      {
+        "language": "abap-cds",
+        "scopeName": "source.abap.cds",
+        "path": "./syntaxes/abap-cds.tmLanguage.json"
       }
     ],
     "snippets": [
@@ -90,6 +110,9 @@
     ],
     "configurationDefaults": {
       "[abap]": {
+        "editor.wordBasedSuggestions": "off"
+      },
+      "[abap-cds]": {
         "editor.wordBasedSuggestions": "off"
       }
     }

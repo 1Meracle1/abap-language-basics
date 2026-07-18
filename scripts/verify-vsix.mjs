@@ -10,11 +10,13 @@ const expected = [
   "[content_types].xml",
   "extension.vsixmanifest",
   "extension/changelog.md",
+  "extension/cds-language-configuration.json",
   "extension/language-configuration.json",
   "extension/license.txt",
   "extension/package.json",
   "extension/readme.md",
   "extension/snippets/abap.json",
+  "extension/syntaxes/abap-cds.tmlanguage.json",
   "extension/syntaxes/abap.tmlanguage.json",
 ].sort();
 

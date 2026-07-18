@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.4
+
+- Added ABAP CDS syntax highlighting and editor configuration for `.ddls`
+  files.
+- Added embedded HANA SQLScript highlighting inside AMDP methods, including
+  queries, procedural statements, declarations, handlers, host variables,
+  built-in functions, types, comments, strings, and operators.
+
 ## 0.0.3
 
 - Added highlighting for built-in functions and generic, instance, static, and
