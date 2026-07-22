@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.0.5
+
+- Improved contextual highlighting for `TABLES` declarations, comparison
+  operators, range components, and additions of `ASSIGN`, `CREATE`, `FORMAT`,
+  `MESSAGE`, and `SUBMIT` statements.
+- Added whole-file templates for executable reports, global classes, ABAP Unit
+  test classes, and classic ABAP CDS views.
+- Added ABAP CDS completions for parameterized views, annotations,
+  associations, projected elements, expressions, filters, and grouping.
+- Expanded ABAP snippets for report events and selections, modern method calls,
+  event-handler registration, grouped loops, safe table expressions, and ABAP
+  Unit assertions.
+- Improved multiline constructor formatting.
+
 ## 0.0.4
 
 - Added ABAP CDS syntax highlighting and editor configuration for `.ddls`

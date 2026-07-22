@@ -25,6 +25,8 @@ TYPES:
   ty_report_state_ref TYPE REF TO ty_report_state,
   ty_report_range TYPE RANGE OF syrepid.
 DATA gv_button TYPE string.
+TABLES: /sttp/rep_evt.
+DATA lr_rep_evt TYPE RANGE OF /sttp/rep_evt-rep_evtid.
 DATA:
   BEGIN OF gs_runtime,
     INCLUDE TYPE ty_report_state AS state RENAMING WITH SUFFIX _runtime,
@@ -182,6 +184,10 @@ ENDCLASS.
 CLASS lcl_worker IMPLEMENTATION.
   METHOD lif_worker~run.
     DATA lt_copy TYPE ty_numbers.
+    lr_rep_evt = VALUE #(
+      ( sign = 'I' option = 'EQ' low = iv_input )
+    ).
+    MESSAGE 'Update cancelled' TYPE 'I' DISPLAY LIKE 'E'.
     APPEND 1 TO lt_copy.
     INSERT 2 INTO TABLE lt_copy.
     READ TABLE lt_copy INTO DATA(lv_first) INDEX 1.

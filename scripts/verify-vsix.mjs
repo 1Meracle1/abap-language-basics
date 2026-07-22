@@ -15,6 +15,7 @@ const expected = [
   "extension/license.txt",
   "extension/package.json",
   "extension/readme.md",
+  "extension/snippets/abap-cds.json",
   "extension/snippets/abap.json",
   "extension/syntaxes/abap-cds.tmlanguage.json",
   "extension/syntaxes/abap.tmlanguage.json",

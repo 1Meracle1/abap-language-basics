@@ -66,7 +66,14 @@ and quote-pair configuration.
 
 ## Editor Features
 
-- Common ABAP 7.50 keyword-prefixed snippets.
+- Keyword-prefixed ABAP 7.50 snippets for reports, declarations, object-oriented
+  code, constructor expressions, control flow, internal tables, Open SQL, and
+  ABAP Unit assertions.
+- ABAP CDS snippets for classic views, parameters, associations, annotations,
+  projected elements, expressions, filtering, and grouping.
+- Whole-file templates for executable reports, global classes, ABAP Unit test
+  classes, and classic ABAP CDS views through **Snippets: Fill File with
+  Snippet**.
 - Automatic bracket, quote, and comment handling for ABAP and CDS.
 - Folding markers for classes, interfaces, methods, forms, function modules,
   modules, selection-screen blocks, and common control-flow blocks.

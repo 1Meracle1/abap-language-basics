@@ -1,4 +1,15 @@
 {
+  "Executable report file": {
+    "prefix": "REPORT",
+    "body": [
+      "REPORT ${1:zreport}.",
+      "",
+      "START-OF-SELECTION.",
+      "  ${0:}"
+    ],
+    "description": "Create an executable report",
+    "isFileTemplate": true
+  },
   "DATA declaration": {
     "prefix": "DATA",
     "body": "DATA ${1:lv_value} TYPE ${2:string}.",
@@ -181,11 +192,38 @@
     "body": "FIELD-SYMBOLS <${1:ls_row}> TYPE ${2:ty_row}.",
     "description": "Declare a field symbol"
   },
+  "PARAMETERS declaration": {
+    "prefix": "PARAMETERS",
+    "body": "PARAMETERS ${1:p_value} TYPE ${2:string}.",
+    "description": "Declare a report parameter"
+  },
+  "SELECT-OPTIONS declaration": {
+    "prefix": "SELECT-OPTIONS",
+    "body": "SELECT-OPTIONS ${1:s_value} FOR ${2:gv_value}.",
+    "description": "Declare a report selection range"
+  },
+  "INITIALIZATION event block": {
+    "prefix": "INITIALIZATION",
+    "body": [
+      "INITIALIZATION.",
+      "  ${0:}"
+    ],
+    "description": "Handle report initialization"
+  },
+  "START-OF-SELECTION event block": {
+    "prefix": "START-OF-SELECTION",
+    "body": [
+      "START-OF-SELECTION.",
+      "  ${0:}"
+    ],
+    "description": "Handle the main report event"
+  },
   "VALUE constructor": {
     "prefix": "VALUE",
     "body": [
-      "${1:result} = VALUE ${2:type}( ${3:}",
-      "  ${4:} )."
+      "${1:result} = VALUE ${2:type}(",
+      "  ${3:field} = ${4:value}",
+      ")."
     ],
     "description": "Create a value with a constructor expression"
   },
@@ -337,7 +375,8 @@
       "  ENDMETHOD.",
       "ENDCLASS."
     ],
-    "description": "Define and implement a public global class"
+    "description": "Define and implement a public global class",
+    "isFileTemplate": true
   },
   "Global final CLASS definition and implementation": {
     "prefix": "CLASS",
@@ -353,7 +392,8 @@
       "  ENDMETHOD.",
       "ENDCLASS."
     ],
-    "description": "Define and implement a final public global class"
+    "description": "Define and implement a final public global class",
+    "isFileTemplate": true
   },
   "Global inherited CLASS definition and implementation": {
     "prefix": "CLASS",
@@ -369,7 +409,8 @@
       "  ENDMETHOD.",
       "ENDCLASS."
     ],
-    "description": "Define and implement a public global subclass"
+    "description": "Define and implement a public global subclass",
+    "isFileTemplate": true
   },
   "Local test CLASS definition and implementation": {
     "prefix": "CLASS",
@@ -387,7 +428,8 @@
       "  ENDMETHOD.",
       "ENDCLASS."
     ],
-    "description": "Define and implement a local ABAP Unit test class"
+    "description": "Define and implement a local ABAP Unit test class",
+    "isFileTemplate": true
   },
   "Deferred CLASS definition": {
     "prefix": "CLASS",
@@ -592,6 +634,35 @@
     ],
     "description": "Implement a method"
   },
+  "Instance method call": {
+    "prefix": [
+      "CALL",
+      "method-call"
+    ],
+    "body": [
+      "DATA(${1:result}) = ${2:lo_object}->${3:method}(",
+      "  ${4:iv_value} = ${5:value}",
+      ")."
+    ],
+    "description": "Call an instance method and receive its result"
+  },
+  "Static method call": {
+    "prefix": [
+      "CALL",
+      "static-method-call"
+    ],
+    "body": [
+      "DATA(${1:result}) = ${2:cl_class}=>${3:method}(",
+      "  ${4:iv_value} = ${5:value}",
+      ")."
+    ],
+    "description": "Call a static method and receive its result"
+  },
+  "SET HANDLER registration": {
+    "prefix": "SET HANDLER",
+    "body": "SET HANDLER ${1:lo_handler}->${2:on_changed} FOR ${3:lo_source}.",
+    "description": "Register an instance event handler"
+  },
   "FORM routine": {
     "prefix": "FORM",
     "body": [
@@ -728,6 +799,16 @@
     ],
     "description": "Loop over an internal table into inline data"
   },
+  "LOOP GROUP BY": {
+    "prefix": "LOOP",
+    "body": [
+      "LOOP AT ${1:lt_rows} INTO DATA(${2:ls_row})",
+      "  GROUP BY ${2:ls_row}-${3:key_field} INTO DATA(${4:key_value}).",
+      "  ${0:}",
+      "ENDLOOP."
+    ],
+    "description": "Loop over internal table groups"
+  },
   "TRY CATCH": {
     "prefix": "TRY",
     "body": [
@@ -753,6 +834,20 @@
     "prefix": "READ TABLE",
     "body": "READ TABLE ${1:lt_rows} INDEX ${2:index} INTO DATA(${3:ls_row}).",
     "description": "Read an internal table row by index"
+  },
+  "LINE_EXISTS check": {
+    "prefix": "LINE_EXISTS",
+    "body": [
+      "IF line_exists( ${1:lt_rows}[ ${2:key_field} = ${3:key_value} ] ).",
+      "  ${0:}",
+      "ENDIF."
+    ],
+    "description": "Check whether an internal table row exists"
+  },
+  "Optional table expression": {
+    "prefix": "VALUE",
+    "body": "DATA(${1:ls_row}) = VALUE #( ${2:lt_rows}[ ${3:key_field} = ${4:key_value} ] OPTIONAL ).",
+    "description": "Read an optional row with a table expression"
   },
   "APPEND VALUE": {
     "prefix": "APPEND",
@@ -909,6 +1004,16 @@
     "prefix": "ROLLBACK WORK",
     "body": "ROLLBACK WORK.",
     "description": "Roll back the current SAP LUW"
+  },
+  "ABAP Unit assert equals": {
+    "prefix": "ASSERT_EQUALS",
+    "body": [
+      "cl_abap_unit_assert=>assert_equals(",
+      "  act = ${1:actual}",
+      "  exp = ${2:expected}",
+      ")."
+    ],
+    "description": "Assert that actual and expected values are equal"
   },
   "CONCATENATE": {
     "prefix": "CONCATENATE",
