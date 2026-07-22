@@ -1,0 +1,92 @@
+{
+  "ABAP CDS view file": {
+    "prefix": "DEFINE VIEW",
+    "body": [
+      "@AbapCatalog.sqlViewName: '${2:ZSQLVIEW}'",
+      "@AbapCatalog.compiler.compareFilter: true",
+      "@AbapCatalog.preserveKey: true",
+      "@AccessControl.authorizationCheck: #CHECK",
+      "@EndUserText.label: '${3:View description}'",
+      "define view ${1:ZI_View}",
+      "  as select from ${4:database_table} as ${5:source}",
+      "{",
+      "  key ${5:source}.${6:key_field},",
+      "      ${5:source}.${7:value_field}",
+      "}"
+    ],
+    "description": "Create a classic ABAP CDS view",
+    "isFileTemplate": true
+  },
+  "ABAP CDS parameterized view file": {
+    "prefix": "DEFINE VIEW",
+    "body": [
+      "@AbapCatalog.sqlViewName: '${2:ZSQLVIEW}'",
+      "@AbapCatalog.compiler.compareFilter: true",
+      "@AbapCatalog.preserveKey: true",
+      "@AccessControl.authorizationCheck: #CHECK",
+      "@EndUserText.label: '${3:View description}'",
+      "define view ${1:ZI_ViewWithParameters}",
+      "  with parameters",
+      "    ${4:p_key_date} : ${5:abap.dats}",
+      "  as select from ${6:database_table} as ${7:source}",
+      "{",
+      "  key ${7:source}.${8:key_field},",
+      "      ${7:source}.${9:value_field}",
+      "}",
+      "where ${7:source}.${10:date_field} = :${4:p_key_date}"
+    ],
+    "description": "Create a classic ABAP CDS view with parameters",
+    "isFileTemplate": true
+  },
+  "CDS annotation": {
+    "prefix": "@",
+    "body": "@${1:EndUserText.label}: '${2:Description}'",
+    "description": "Add an ABAP CDS annotation"
+  },
+  "CDS association": {
+    "prefix": "ASSOCIATION",
+    "body": [
+      "association [${1:0..1}] to ${2:ZI_Target} as ${3:_Target}",
+      "  on \\$projection.${4:key_field} = ${3:_Target}.${5:key_field}"
+    ],
+    "description": "Declare an ABAP CDS association"
+  },
+  "CDS key element": {
+    "prefix": "KEY",
+    "body": "key ${1:source}.${2:key_field}",
+    "description": "Project a key element"
+  },
+  "CDS element alias": {
+    "prefix": "AS",
+    "body": "${1:source}.${2:field} as ${3:Element}",
+    "description": "Project an element with an alias"
+  },
+  "CDS CASE expression": {
+    "prefix": "CASE",
+    "body": [
+      "case",
+      "  when ${1:condition} then ${2:value}",
+      "  else ${3:fallback}",
+      "end as ${4:Element}"
+    ],
+    "description": "Create an ABAP CDS CASE expression"
+  },
+  "CDS CAST expression": {
+    "prefix": "CAST",
+    "body": "cast( ${1:source}.${2:field} as ${3:abap.char(10)} ) as ${4:Element}",
+    "description": "Cast an ABAP CDS expression"
+  },
+  "CDS WHERE clause": {
+    "prefix": "WHERE",
+    "body": "where ${1:source}.${2:field} = ${3:value}",
+    "description": "Add an ABAP CDS filter"
+  },
+  "CDS GROUP BY clause": {
+    "prefix": "GROUP BY",
+    "body": [
+      "group by",
+      "  ${1:source}.${2:field}"
+    ],
+    "description": "Add ABAP CDS grouping"
+  }
+}

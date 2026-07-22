@@ -217,6 +217,23 @@ suite("ABAP language basics", () => {
     assert.strictEqual(document.getText(), "IF condition.\n  \nENDIF.");
   });
 
+  test("provides ABAP CDS snippets", async () => {
+    const document = await vscode.workspace.openTextDocument({
+      language: "abap-cds",
+      content: "",
+    });
+    await vscode.window.showTextDocument(document);
+    await vscode.commands.executeCommand("editor.action.insertSnippet", {
+      langId: "abap-cds",
+      name: "CDS association",
+    });
+
+    assert.strictEqual(document.getText(), [
+      "association [0..1] to ZI_Target as _Target",
+      "  on $projection.key_field = _Target.key_field",
+    ].join("\n"));
+  });
+
   test("provides named-unit and control-flow folding ranges", async () => {
     const document = await openFixture("highlighting.abap");
     const ranges = await vscode.commands.executeCommand<vscode.FoldingRange[]>(
@@ -264,6 +281,7 @@ suite("ABAP language basics", () => {
     assert.match(declarations, /REPORT\|PROGRAM/);
     assert.match(declarations, /SELECT-OPTIONS/);
     assert.match(declarations, /CLASS-DATA/);
+    assert.match(declarations, /TABLES/);
     assert.match(declarations, /INTERFACES/);
     assert.match(declarations, /ALIASES/);
     assert.match(declarations, /FIELD-SYMBOL/);
@@ -447,6 +465,131 @@ suite("ABAP language basics", () => {
       "DATA(lo_type) = CAST cl_abap_elemdescr(",
     ]) {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);
+    }
+  });
+
+  test("scopes contextual declarations, components, and additions", async () => {
+    const document = await openFixture("highlighting.abap");
+    const tokens = await vscode.commands.executeCommand<Array<{
+      c: string;
+      t: string;
+    }>>("_workbench.captureSyntaxTokens", document.uri);
+
+    const tables = tokens.find(token => token.c === "TABLES");
+    assert.ok(tables, "VS Code did not emit a TABLES syntax token");
+    assert.match(tables.t, /\bkeyword\.declaration\.abap\b/);
+
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+    const contextualKeyword = grammar.repository.keywords.patterns.find(
+      (pattern: { name: string }) =>
+        pattern.name === "keyword.other.contextual.abap",
+    );
+    assert.ok(contextualKeyword);
+    assert.match(
+      "SET SIGN OF lv_value",
+      textMateRegex(contextualKeyword.match),
+    );
+    assert.doesNotMatch("sign = 'I'", textMateRegex(contextualKeyword.match));
+    assert.doesNotMatch(
+      "option = 'EQ'",
+      textMateRegex(contextualKeyword.match),
+    );
+
+    for (const component of ["sign", "option"]) {
+      const token = tokens.find(candidate => candidate.c === component);
+      assert.ok(token, `VS Code did not emit a ${component} syntax token`);
+      assert.match(token.t, /\bvariable\.other\.readwrite\.abap\b/);
+      assert.doesNotMatch(token.t, /\bkeyword\./);
+    }
+
+    const like = tokens.find(token => token.c === "LIKE");
+    assert.ok(like, "VS Code did not emit a LIKE syntax token");
+    assert.match(like.t, /\bkeyword\.other\.message\.abap\b/);
+  });
+
+  test("scopes word comparisons and statement-local additions", async () => {
+    const document = await openFixture("operand-keywords.abap");
+    await vscode.window.showTextDocument(document);
+    const tokens = await vscode.commands.executeCommand<Array<{
+      c: string;
+      t: string;
+      r: Record<string, string | undefined>;
+    }>>("_workbench.captureSyntaxTokens", document.uri);
+
+    const identifier = tokens.find(candidate => candidate.c === "a" &&
+      /\bvariable\.other\.readwrite\.abap\b/.test(candidate.t));
+    assert.ok(identifier, "VS Code did not emit the comparison operand");
+
+    const expectScope = (text: string, scope: RegExp): void => {
+      const token = tokens.find(candidate => candidate.c === text &&
+        scope.test(candidate.t));
+      assert.ok(
+        token,
+        `expected ${text} with ${scope}; matching text: ${
+          JSON.stringify(tokens.filter(candidate => candidate.c === text))
+        }`,
+      );
+      assert.ok(
+        token.r.dark_plus,
+        `Dark+ did not assign ${text} a foreground: ${JSON.stringify(token)}`,
+      );
+      assert.notStrictEqual(
+        token.r.dark_plus,
+        identifier.r.dark_plus,
+        `Dark+ did not visually distinguish ${text} from an operand`,
+      );
+    };
+
+    for (const operator of [
+      "EQ", "NE", "LT", "LE", "GT", "GE", "CO", "CN", "CA", "NA",
+      "CS", "NS", "CP", "NP",
+    ]) {
+      expectScope(operator, /\bkeyword\.other\.comparison\.abap\b/);
+    }
+    for (const keyword of [
+      "COMPONENT", "INCREMENT", "OF", "STRUCTURE", "TO",
+    ]) {
+      expectScope(keyword, /\bkeyword\.other\.assign\.abap\b/);
+    }
+    for (const keyword of ["OBJECT", "AREA", "HANDLE"]) {
+      expectScope(keyword, /\bkeyword\.other\.create\.abap\b/);
+    }
+    for (const keyword of [
+      "COLOR", "INTENSIFIED", "INVERSE", "HOTSPOT", "INPUT", "FRAMES",
+      "ON", "OFF", "RESET",
+    ]) {
+      expectScope(keyword, /\bkeyword\.other\.format\.abap\b/);
+    }
+    expectScope("COL_HEADING", /\bconstant\.language\.format\.abap\b/);
+    for (const keyword of [
+      "USER", "VIA", "JOB", "NUMBER", "WITH", "IN", "AND", "RETURN",
+    ]) {
+      expectScope(keyword, /\bkeyword\.other\.submit\.abap\b/);
+    }
+    for (const name of [
+      "component", "color", "handle", "number", "reset", "user",
+    ]) {
+      const token = tokens.find(candidate => candidate.c === name);
+      assert.ok(token, `VS Code did not emit the ${name} declaration`);
+      assert.match(token.t, /\bvariable\.other\.declaration\.abap\b/);
+      assert.doesNotMatch(token.t, /\bkeyword\./);
+    }
+
+    const grammar = JSON.parse(fs.readFileSync(
+      path.resolve(__dirname, "../syntaxes/abap.tmLanguage.json"),
+      "utf8",
+    ));
+    const comparisonKeywords = grammar.repository["comparison-keywords"]
+      .patterns[0];
+    for (const operator of [
+      "EQ", "NE", "LT", "LE", "GT", "GE", "CO", "CN", "CA", "NA",
+      "CS", "NS", "CP", "NP", "BYTE-CO", "BYTE-CN", "BYTE-CA",
+      "BYTE-NA", "BYTE-CS", "BYTE-NS",
+    ]) {
+      assert.match(operator, textMateRegex(comparisonKeywords.match));
     }
   });
 
