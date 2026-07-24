@@ -1126,7 +1126,7 @@ suite("ABAP language basics", () => {
       "TRANSPORTING", "NO", "FIELDS", "BINARY", "SEARCH", "REFERENCE",
       "LINES", "OF", "INITIAL", "LINE", "ADJACENT", "DUPLICATES",
       "ASCENDING", "COMPARING", "COMPONENTS", "DESCENDING", "INDEX",
-      "USING", "WITH",
+      "USING", "WITH", "GROUP", "MEMBERS", "SIZE", "WITHOUT",
     ]) {
       assert.match(tokenText, new RegExp(`\\b${syntax}\\b`));
     }
@@ -1137,6 +1137,57 @@ suite("ABAP language basics", () => {
     assert.ok(loop);
     assert.ok(loop.patterns.some((pattern: { name?: string }) =>
       pattern.name === "meta.statement.internal-table.loop.abap"));
+    assert.strictEqual(loop.beginCaptures[3].name,
+      "keyword.other.internal-table.abap");
+    assert.strictEqual(loop.beginCaptures[4].name,
+      "variable.other.group.abap");
+    assert.strictEqual(
+      textMateRegex(loop.begin).exec(
+        "LOOP AT GROUP group_id INTO DATA(ls_member).",
+      )?.[4],
+      "group_id",
+    );
+    assert.strictEqual(
+      textMateRegex(loop.begin).exec(
+        "LOOP AT group INTO DATA(ls_member).",
+      )?.[5],
+      "group",
+    );
+
+    const functionCall = grammar.repository.calls.patterns.find(
+      (pattern: { name?: string }) =>
+        pattern.name === "meta.statement.call.function.abap",
+    );
+    assert.ok(functionCall);
+    assert.ok(functionCall.patterns.some((pattern: { include?: string }) =>
+      pattern.include === "#function-call-tokens"));
+    assert.ok(grammar.repository["function-call-tokens"].patterns.some(
+      (pattern: { include?: string }) => pattern.include === "#declarations",
+    ));
+    assert.match(
+      JSON.stringify(grammar.repository["function-call-tokens"]),
+      /\bTABLES\b/,
+    );
+
+    const codeIncludes = grammar.repository.code.patterns
+      .map((pattern: { include?: string }) => pattern.include);
+    assert.ok(codeIncludes.indexOf("#iteration-expressions") <
+      codeIncludes.indexOf("#procedure-calls"));
+    const iterations = grammar.repository["iteration-expressions"].patterns;
+    const groupIteration = iterations[0];
+    const tableIteration = iterations[1];
+    assert.strictEqual(
+      textMateRegex(tableIteration.match).exec(
+        "FOR ls_source IN lt_more",
+      )?.[3],
+      "IN",
+    );
+    assert.strictEqual(
+      textMateRegex(groupIteration.match).exec(
+        "FOR ls_member IN GROUP group_id",
+      )?.[4],
+      "GROUP",
+    );
 
     const tokens = await vscode.commands.executeCommand<Array<{
       c: string;
@@ -1146,6 +1197,23 @@ suite("ABAP language basics", () => {
       const token = tokens.find(candidate => candidate.c === type);
       assert.ok(token, `VS Code did not emit a ${type} syntax token`);
       assert.match(token.t, /\bsupport\.type\.builtin\.abap\b/);
+    }
+
+    for (const [text, scope] of [
+      ["TABLES", /\bkeyword\.other\.parameter\.function\.abap\b/],
+      ["FOR", /\bkeyword\.other\.iteration\.abap\b/],
+      ["IN", /\bkeyword\.other\.iteration\.abap\b/],
+      ["WHERE", /\bkeyword\.other\.iteration\.abap\b/],
+      ["group_id", /\bvariable\.other\.group\.abap\b/],
+    ] as Array<[string, RegExp]>) {
+      const token = tokens.find(candidate =>
+        candidate.c === text && scope.test(candidate.t));
+      assert.ok(
+        token,
+        `expected ${text} with ${scope}; matching text: ${
+          JSON.stringify(tokens.filter(candidate => candidate.c === text))
+        }`,
+      );
     }
 
     const number = grammar.repository.numbers.patterns[0];
@@ -1161,7 +1229,9 @@ suite("ABAP language basics", () => {
       "WITH TABLE KEY", "WITH KEY", "APPEND INITIAL LINE",
       "INSERT LINES OF", "INSERT VALUE ty_row(", "USING KEY",
       "ADJACENT DUPLICATES FROM", "COMPARING id text", "DESCRIBE TABLE",
-      "SORT lt_rows", "COLLECT VALUE ty_row(",
+      "SORT lt_rows", "COLLECT VALUE ty_row(", "LOOP AT GROUP group_id",
+      "FOR ls_source IN lt_more WHERE (", "CALL FUNCTION 'Z_PROCESS_ROWS'",
+      "TABLES",
       "'Don''t'", "`Use `` inside`", "9999999999999999999999999999999",
     ]) {
       assert.ok(fixture.includes(syntax), `fixture is missing ${syntax}`);

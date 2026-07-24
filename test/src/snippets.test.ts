@@ -49,6 +49,25 @@ suite("ABAP snippets", () => {
     );
   });
 
+  test("covers table comprehensions, function tables, and group members", () => {
+    assert.match(
+      bodyOf(snippets, "VALUE table comprehension"),
+      /FOR .* IN .*\n  \( .* \)/,
+    );
+    assert.match(
+      bodyOf(snippets, "VALUE filtered table comprehension"),
+      /FOR .* IN .* WHERE \( .* \)/,
+    );
+    assert.match(
+      bodyOf(snippets, "CALL FUNCTION with TABLES"),
+      /CALL FUNCTION .*\n  TABLES\n/,
+    );
+    assert.match(
+      bodyOf(snippets, "LOOP AT GROUP"),
+      /^LOOP AT GROUP .* INTO DATA\(.*\)\.\n.*\nENDLOOP\.$/,
+    );
+  });
+
   test("covers local, global, inherited, final, and test classes", () => {
     for (const [name, syntax] of [
       ["Local CLASS definition and implementation", "DEFINITION."],

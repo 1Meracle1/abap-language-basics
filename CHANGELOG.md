@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.6
+
+- Added contextual highlighting for function module parameter sections,
+  including the `TABLES` addition of `CALL FUNCTION`.
+- Added highlighting and snippets for table comprehensions with `FOR ... IN`
+  and optional `WHERE` conditions.
+- Added highlighting and snippets for `LOOP AT GROUP` member loops and related
+  internal-table grouping additions.
+
 ## 0.0.5
 
 - Improved contextual highlighting for `TABLES` declarations, comparison

@@ -20,6 +20,9 @@
           "include": "#constructors"
         },
         {
+          "include": "#iteration-expressions"
+        },
+        {
           "include": "#table-expressions"
         },
         {
@@ -350,8 +353,9 @@
           }
         },
         {
-          "match": "(?i:(?<![!\\-~>/])\\b(CALL)[ \\t]+(FUNCTION)[ \\t]+('(?:''|[^'\\r\\n])*'))",
-          "captures": {
+          "name": "meta.statement.call.function.abap",
+          "begin": "(?i:^[ \\t]*(CALL)[ \\t]+(FUNCTION)[ \\t]+(?:('(?:''|[^'\\r\\n])*')|(!?/?[A-Z_][A-Z0-9_/]*)))",
+          "beginCaptures": {
             "1": {
               "name": "keyword.other.control.call.abap"
             },
@@ -360,8 +364,22 @@
             },
             "3": {
               "name": "entity.name.function.abap"
+            },
+            "4": {
+              "name": "entity.name.function.abap"
             }
-          }
+          },
+          "end": "\\.",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.terminator.statement.abap"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#function-call-tokens"
+            }
+          ]
         },
         {
           "match": "(?i:(?<![!\\-~>/])\\b(PERFORM)[ \\t]+(!?[/A-Z_][A-Z0-9_/]*))",
@@ -430,6 +448,50 @@
         }
       ]
     },
+    "function-call-tokens": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#constructors"
+        },
+        {
+          "include": "#iteration-expressions"
+        },
+        {
+          "include": "#table-expressions"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#pragmas"
+        },
+        {
+          "name": "keyword.other.parameter.function.abap",
+          "match": "(?i:(?<![-~>/])\\b(?:EXPORTING|IMPORTING|CHANGING|TABLES|EXCEPTIONS)\\b(?![-~/]))"
+        },
+        {
+          "include": "#declarations"
+        },
+        {
+          "include": "#procedure-calls"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#identifiers"
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    },
     "procedure-calls": {
       "patterns": [
         {
@@ -480,6 +542,51 @@
               "name": "entity.name.type.abap"
             }
           }
+        }
+      ]
+    },
+    "iteration-expressions": {
+      "patterns": [
+        {
+          "match": "(?i:(?<![-~>/])\\b(FOR)[ \\t]+((?:!?/?[A-Z_][A-Z0-9_/]*)|(?:<[/A-Z_][A-Z0-9_/]*>))[ \\t]+(IN)[ \\t]+(GROUP)[ \\t]+((?:!?/?[A-Z_][A-Z0-9_/]*)|(?:<[/A-Z_][A-Z0-9_/]*>)))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.iteration.abap"
+            },
+            "2": {
+              "name": "variable.other.readwrite.declaration.abap"
+            },
+            "3": {
+              "name": "keyword.other.iteration.abap"
+            },
+            "4": {
+              "name": "keyword.other.iteration.abap"
+            },
+            "5": {
+              "name": "variable.other.group.abap"
+            }
+          }
+        },
+        {
+          "match": "(?i:(?<![-~>/])\\b(FOR)[ \\t]+((?:!?/?[A-Z_][A-Z0-9_/]*)|(?:<[/A-Z_][A-Z0-9_/]*>))[ \\t]+(IN)[ \\t]+((?:!?/?[A-Z_][A-Z0-9_/]*)|(?:<[/A-Z_][A-Z0-9_/]*>)))",
+          "captures": {
+            "1": {
+              "name": "keyword.other.iteration.abap"
+            },
+            "2": {
+              "name": "variable.other.readwrite.declaration.abap"
+            },
+            "3": {
+              "name": "keyword.other.iteration.abap"
+            },
+            "4": {
+              "name": "variable.other.table.abap"
+            }
+          }
+        },
+        {
+          "name": "keyword.other.iteration.abap",
+          "match": "(?i:(?<![-~>/])\\bWHERE\\b(?=[ \\t]*\\())"
         }
       ]
     },
@@ -1227,7 +1334,7 @@
         },
         {
           "name": "meta.block.loop.abap",
-          "begin": "(?i:^[ \\t]*(LOOP)\\b(?:[ \\t]+(AT)[ \\t]+(!?/?[A-Z_][A-Z0-9_/]*))?)",
+          "begin": "(?i:^[ \\t]*(LOOP)\\b(?:[ \\t]+(AT)[ \\t]+(?:(GROUP)[ \\t]+((?:<[/A-Z_][A-Z0-9_/]*>)|(?:!?/?[A-Z_][A-Z0-9_/]*))(?=[ \\t]+(?:INTO|ASSIGNING|REFERENCE|TRANSPORTING)\\b)|((?:<[/A-Z_][A-Z0-9_/]*>)|(?:!?/?[A-Z_][A-Z0-9_/]*))))?)",
           "beginCaptures": {
             "1": {
               "name": "keyword.other.control.loop.abap"
@@ -1236,6 +1343,12 @@
               "name": "keyword.other.internal-table.abap"
             },
             "3": {
+              "name": "keyword.other.internal-table.abap"
+            },
+            "4": {
+              "name": "variable.other.group.abap"
+            },
+            "5": {
               "name": "variable.other.table.abap"
             }
           },
@@ -1650,7 +1763,7 @@
         },
         {
           "name": "keyword.other.internal-table.abap",
-          "match": "(?i:(?<![-~>/])\\b(?:ALL|ASCENDING|ASSIGNING|BY|COMPARING|COMPONENTS|DESCENDING|FIELDS|FROM|INDEX|INTO|KEY|LINES|OF|REFERENCE|SORTED|TABLE|TO|TRANSPORTING|USING|WHERE|WITH)\\b(?![-~/]))"
+          "match": "(?i:(?<![-~>/])\\b(?:ALL|AS|ASCENDING|ASSIGNING|BY|COMPARING|COMPONENTS|DESCENDING|FIELDS|FROM|GROUP|INDEX|INTO|KEY|LINES|MEMBERS|OF|REFERENCE|SIZE|SORTED|TABLE|TEXT|TO|TRANSPORTING|USING|WHERE|WITH|WITHOUT)\\b(?![-~/]))"
         },
         {
           "include": "#declarations"

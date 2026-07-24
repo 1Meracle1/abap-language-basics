@@ -236,6 +236,26 @@
     ],
     "description": "Create an internal table value"
   },
+  "VALUE table comprehension": {
+    "prefix": "VALUE",
+    "body": [
+      "${1:lt_result} = VALUE ${2:ty_table}(",
+      "  FOR ${3:ls_row} IN ${4:lt_rows}",
+      "  ( ${3:ls_row} )",
+      ")."
+    ],
+    "description": "Construct an internal table from the rows of another table"
+  },
+  "VALUE filtered table comprehension": {
+    "prefix": "VALUE",
+    "body": [
+      "${1:lt_result} = VALUE ${2:ty_table}(",
+      "  FOR ${3:ls_row} IN ${4:lt_rows} WHERE ( ${5:id} = ${6:value} )",
+      "  ( ${3:ls_row} )",
+      ")."
+    ],
+    "description": "Construct an internal table from rows selected by a WHERE condition"
+  },
   "NEW constructor": {
     "prefix": "NEW",
     "body": "${1:lo_object} = NEW ${2:cl_class}( ${3:} ).",
@@ -704,6 +724,20 @@
     ],
     "description": "Call a function module"
   },
+  "CALL FUNCTION with TABLES": {
+    "prefix": "CALL FUNCTION",
+    "body": [
+      "CALL FUNCTION '${1:FUNCTION_NAME}'",
+      "  TABLES",
+      "    ${2:it_rows} = ${3:lt_rows}",
+      "  EXCEPTIONS",
+      "    OTHERS = 1.",
+      "IF sy-subrc <> 0.",
+      "  ${4:}",
+      "ENDIF."
+    ],
+    "description": "Call a function module with a table parameter"
+  },
   "MODULE input": {
     "prefix": "MODULE",
     "body": [
@@ -808,6 +842,15 @@
       "ENDLOOP."
     ],
     "description": "Loop over internal table groups"
+  },
+  "LOOP AT GROUP": {
+    "prefix": "LOOP AT GROUP",
+    "body": [
+      "LOOP AT GROUP ${1:group} INTO DATA(${2:ls_member}).",
+      "  ${0:}",
+      "ENDLOOP."
+    ],
+    "description": "Loop over the members of the current internal table group"
   },
   "TRY CATCH": {
     "prefix": "TRY",

@@ -41,6 +41,25 @@ LOOP AT lt_rows USING KEY by_text INTO DATA(ls_current)
   ls_row = ls_current.
 ENDLOOP.
 
+LOOP AT lt_rows INTO DATA(ls_group_source)
+  GROUP BY ls_group_source-id INTO DATA(group_id).
+  LOOP AT GROUP group_id INTO DATA(ls_group_member)
+    WHERE text IS NOT INITIAL.
+    ls_row = ls_group_member.
+  ENDLOOP.
+ENDLOOP.
+
+DATA(lt_selected) = VALUE ty_rows(
+  FOR ls_source IN lt_more WHERE ( id > 0 )
+  ( ls_source )
+).
+
+CALL FUNCTION 'Z_PROCESS_ROWS'
+  TABLES
+    it_rows = lt_rows
+  EXCEPTIONS
+    OTHERS = 1.
+
 DATA(lv_text_literal) = 'Don''t'.
 DATA(lv_string_literal) = `Use `` inside`.
 DATA lv_large_number TYPE p LENGTH 16

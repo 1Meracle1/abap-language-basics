@@ -2,7 +2,7 @@
   "name": "abap-language-basics",
   "displayName": "ABAP Language Basics",
   "description": "Syntax highlighting for ABAP, AMDP SQLScript, and ABAP CDS, with snippets, folding, and editor configuration.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "1meracle1",
   "license": "MIT",
   "author": "ABAP LSP contributors",
